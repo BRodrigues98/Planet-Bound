@@ -23,8 +23,11 @@ public class AwaitMovement extends StateAdapter{
                 return new GameOver(game);
             else if(whereTo == 1)
                 return new AwaitDiceRoll(game);
+            else if(whereTo == 2)
+                return new AwaitPlanetDecision(game);
             else
                 return this;
         }
     }
+
 }

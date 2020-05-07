@@ -9,6 +9,6 @@ public class AwaitMiningConfirmation extends StateAdapter{
 
     @Override
     public IStates returnToShip() {
-        return new AwaitPlanetDecision(game);
+        return new AwaitMovement(game);
     }
 }

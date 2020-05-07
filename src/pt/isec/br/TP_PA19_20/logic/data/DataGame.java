@@ -29,6 +29,7 @@ public class DataGame {
     private boolean firstMove;
     private Planet planet;
     private List<String> events;
+    private boolean wasRedDot;
 
 
 
@@ -68,6 +69,7 @@ public class DataGame {
         positions.add("Shields Officer");
         positions.add("Weapons Officer");
         positions.add("Cargo Hold Officer");
+        wasRedDot = false;
     }
     //------------ GETTERS/SETTERS ------------
 
@@ -104,6 +106,10 @@ public class DataGame {
     public List<String> getPositions() { return positions; }
 
     public void setPositions(List<String> positions) { this.positions = positions; }
+
+    public boolean isWasRedDot() { return wasRedDot; }
+
+    public void setWasRedDot(boolean wasRedDot) { this.wasRedDot = wasRedDot; }
 
     //-----------------------------------------
 
@@ -167,7 +173,16 @@ public class DataGame {
                     //game.setPreviousPosition(game.getPosition());
                     //game.setPosition("planet");
                     addLogs("Exiting wormhole.");
-                    return 1;
+                    if(!wasRedDot) {
+                        addLogs("New event about to happen. Hold tight.");
+                        wasRedDot = true;
+                        return 1;
+                    }
+                    else{
+                        addLogs("Travelling to next planet.");
+                        wasRedDot = false;
+                        return 2;
+                    }
                 }
             }
             else{ //Nao tem shield suficiente para passar o wormhole
@@ -193,7 +208,16 @@ public class DataGame {
                     //game.setPreviousPosition(game.getPosition());
                     //game.setPosition("planet");
                     addLogs("Exiting wormhole.");
-                    return 1;
+                    if(!wasRedDot) {
+                        addLogs("New event about to happen. Hold tight.");
+                        wasRedDot = true;
+                        return 1;
+                    }
+                    else{
+                        addLogs("Travelling to next planet.");
+                        wasRedDot = false;
+                        return 2;
+                    }
                 }
 
             }
@@ -202,8 +226,16 @@ public class DataGame {
             //game.setPreviousPosition(game.getPosition());
             //game.setPosition("red dot");
             ship.setFuel(ship.getFuel() - 1);
-            addLogs("New event about to happen. Hold tight.");
-            return 1;
+            if(!wasRedDot) {
+                addLogs("New event about to happen. Hold tight.");
+                wasRedDot = true;
+                return 1;
+            }
+            else{
+                addLogs("Travelling to next planet.");
+                wasRedDot = false;
+                return 2;
+            }
         }
     }
 
@@ -287,11 +319,11 @@ public class DataGame {
                     if(planet.getAlien().getPosX() > ship.getDrone().getPosX())
                         planet.getAlien().setPosX(planet.getAlien().getPosX() - 1);
                     else if(planet.getAlien().getPosX() < ship.getDrone().getPosX())
-                        planet.getAlien().setPosX(planet.getAlien().getPosX() - 1);
+                        planet.getAlien().setPosX(planet.getAlien().getPosX() + 1);
                     else if(planet.getAlien().getPosY() > ship.getDrone().getPosY())
                         planet.getAlien().setPosY(planet.getAlien().getPosY() - 1);
                     else if(planet.getAlien().getPosY() < ship.getDrone().getPosY())
-                        planet.getAlien().setPosY(planet.getAlien().getPosY() - 1);
+                        planet.getAlien().setPosY(planet.getAlien().getPosY() + 1);
                 }
             }
             //Só sai quando o drone já tem o recurso, voltar para a posição inicial
@@ -335,11 +367,10 @@ public class DataGame {
                 }
             }
             ship.getDrone().setResourceFound(resource);
-            if(planet instanceof BluePlanet) {
-                if (resource.equals("artifact")) {
-                    ((BluePlanet) planet).setFoundArtifact(true);
-                    addLogs("Your drone found an artifact! Mining successful and removed one fuel from ship.");
-                }
+            if(planet instanceof BluePlanet && resource.equals("artifact")) {
+                ((BluePlanet) planet).setFoundArtifact(true);
+                addLogs("Your drone found an artifact! Mining successful and removed one fuel from ship.");
+                ship.setNumArtifacts(ship.getNumArtifacts() + 1);
             }
             else{
                 addLogs("Your drone found a " + resource + " resource. Mining successful and removed one fuel from ship.");
@@ -350,10 +381,12 @@ public class DataGame {
                 if(ship.getCargoType().get(i).equals(resource)){
                     if(ship.getCargoHold().get(i) + howMany > ship.getMaxCargo()){
                         addLogs("Your cargo hold is now full but you had to waste a few resources since you've found " + howMany + " of this resource.");
+                        planet.setTimesMined(planet.getTimesMined() + 1);
                         ship.getCargoHold().set(i, ship.getMaxCargo());
                     }
                     else{
-                        addLogs("You've found " + howMany + "of this resource and it's been added to your cargo.");
+                        addLogs("You've found " + howMany + " of this resource and it's been added to your cargo.");
+                        planet.setTimesMined(planet.getTimesMined() + 1);
                         ship.getCargoHold().set(i, ship.getCargoHold().get(i) + howMany);
                     }
                 }
@@ -392,6 +425,7 @@ public class DataGame {
             for (int i = 0; i < getPlanet().getAlien().getAttack().size(); i++) {
                 if (getPlanet().getAlien().getAttack().get(i) == dice) {
                     ship.getDrone().setHp(ship.getDrone().getHp() - 1);
+                    addLogs("Your drone took a hit! It has " + ship.getDrone().getHp() + " HP left.");
                 }
             }
             dice = (int) (Math.random() * 6) + 1;
@@ -424,17 +458,18 @@ public class DataGame {
                 if (ship.getExtraMember().isEmpty()) {
                     int index = 0;
                     //Procura o último officer vivo e guarda o indice em index
-                    for (int i = 0; i < officers.size(); i++) {
-                        if (!officers.get(i)) {
+                    for (int i = officers.size() - 1; i >= 0; i--) {
+                        if (officers.get(i)) {
                             if (i != 0)
-                                index = i - 1;
+                                index = i;
                             break;
                         }
                     }
                     addLogs(officerKilled(index));
+                    officers.set(index, false);
                 }
                 else {
-                    ship.getExtraMember().set(ship.getExtraMember().size(), false);
+                    ship.getExtraMember().remove(ship.getExtraMember().size() - 1);
                 }
 
                 break;
@@ -698,5 +733,22 @@ public class DataGame {
             default:
                 return 0;
         }
+    }
+
+    public void currentShipStats() {
+        addLogs("Officers Available:");
+        for (int i = 0; i < officers.size(); i++) {
+            if(officers.get(i)){
+                addLogs(positions.get(i));
+            }
+        }
+
+        addLogs("\nWeapons System cells: " + ship.getWeaponSystem() + "\nShield System cells: " + ship.getShieldSystem() + "\nFuel cells: " + ship.getFuel());
+
+        addLogs("Cargo Hold (Level " + ship.getCargoHoldLvl() + " -> " + ship.getMaxCargo() + " max for each resource):");
+        for (int i = 0; i < ship.getCargoHold().size(); i++) {
+            addLogs(ship.getCargoType().get(i) + " resources: " + ship.getCargoHold().get(i));
+        }
+        addLogs("Artifacts: " + ship.getNumArtifacts());
     }
 }

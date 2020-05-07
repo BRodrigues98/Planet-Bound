@@ -15,5 +15,6 @@ public interface IStates {
     IStates convert(int resNew, int resOld);
     IStates roll(int type);
     IStates stopConvert();
+    IStates checkLossConditions();
     //IStates extraConversion();
 }

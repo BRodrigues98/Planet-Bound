@@ -46,7 +46,6 @@ public abstract class Ship {
         drone = new Drone();
         hasDrone = true;
         extraMember = new ArrayList<>();
-        extraMember.add(false);
         maxCargo = 6;
     }
 

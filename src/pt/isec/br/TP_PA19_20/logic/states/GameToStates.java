@@ -76,6 +76,10 @@ public class GameToStates {
 
     public void start() { this.state = state.start(game); }
 
+    public void currentShipStats() { game.currentShipStats(); }
+
+    public void checkLossConditions() { this.state = state.checkLossConditions();}
+
 
     //public void extraConversion() { this.state = state.extraConversion();}
 
