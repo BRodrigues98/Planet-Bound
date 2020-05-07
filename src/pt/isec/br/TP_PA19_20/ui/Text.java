@@ -45,8 +45,31 @@ public class Text {
 
     private void UIGameOver() {
         checkLogs();
+        if(game.getNumArtifacts() == 5)
+            System.out.println("Congratulations. You have won the game.");
+        else
+            System.out.println("Sorry, you have lost the game.");
 
 
+
+        int value;
+        do {
+            System.out.println("What do you want to do?");
+            System.out.println("1 - Play again.");
+            System.out.println("2 - Exit");
+            System.out.print(">.");
+
+            while (!sc.hasNextInt())
+                sc.next();
+            value = sc.nextInt();
+            sc.nextLine();
+
+            if(value == 1)
+                game.start();
+            else if(value == 2)
+                exit = true;
+        }
+        while(value > 2);
     }
 
     private void UIAwaitSSDecision() {

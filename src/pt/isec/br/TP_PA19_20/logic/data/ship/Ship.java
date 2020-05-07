@@ -43,7 +43,7 @@ public abstract class Ship {
         cargoType.add("green");   //Green resource
         
         numArtifacts = 0;
-        drone = null;
+        drone = new Drone();
         hasDrone = true;
         extraMember = new ArrayList<>();
         extraMember.add(false);

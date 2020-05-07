@@ -35,6 +35,12 @@ public class DataGame {
     //------------ CONSTRUCTOR ------------
 
     public DataGame() {
+        init();
+    }
+
+    //-------------------------------------
+
+    public void init(){
         ship = null;
         officers = new ArrayList<>();
 
@@ -54,7 +60,7 @@ public class DataGame {
         events.add("Fuel Loss");
         events.add("No Event");
         events.add("Crew Rescue");
-        
+
         positions = new ArrayList<>();
         positions.add("Captain");
         positions.add("Navigation Officer");
@@ -63,9 +69,6 @@ public class DataGame {
         positions.add("Weapons Officer");
         positions.add("Cargo Hold Officer");
     }
-
-    //-------------------------------------
-
     //------------ GETTERS/SETTERS ------------
 
     public Ship getShip() {
@@ -163,7 +166,7 @@ public class DataGame {
                 else {
                     //game.setPreviousPosition(game.getPosition());
                     //game.setPosition("planet");
-                    addLogs("Travelling to new planet.");
+                    addLogs("Exiting wormhole.");
                     return 1;
                 }
             }
@@ -189,7 +192,7 @@ public class DataGame {
                 else { //Passamos o wormhole e chegamos a novo planeta
                     //game.setPreviousPosition(game.getPosition());
                     //game.setPosition("planet");
-                    addLogs("Travelling to new planet.");
+                    addLogs("Exiting wormhole.");
                     return 1;
                 }
 
@@ -200,12 +203,18 @@ public class DataGame {
             //game.setPosition("red dot");
             ship.setFuel(ship.getFuel() - 1);
             addLogs("New event about to happen. Hold tight.");
-            return 2;
+            return 1;
         }
     }
 
     public int mine(){
-        ship.setDrone(new Drone());
+        if(!ship.isDrone()){
+            addLogs("You don't have a drone to mine.");
+            return 0;
+        }
+
+        ship.getDrone().setPosX((int) (Math.random() * 6) + 1);
+        ship.getDrone().setPosY((int) (Math.random() * 6) + 1);
 
         int[] droneStartingLocation = new int[2];
         droneStartingLocation[0] = ship.getDrone().getPosX();
@@ -226,6 +235,12 @@ public class DataGame {
             randomAlien();
             int index = (int) (Math.random() * planet.getNumResources());
             String resource = planet.getTypeResource().get(index);
+
+            int howMany = 1;
+            if(!resource.equals("artifact")){
+                howMany = (int) (Math.random() * 3) + 1;
+            }
+
             boolean pickedUp = false;
             int resPosX, resPosY;
 
@@ -331,6 +346,18 @@ public class DataGame {
             }
             planet.setTimesMined(planet.getTimesMined() + 1);
             ship.setFuel(ship.getFuel() - 1);
+            for (int i = 0; i < ship.getCargoHold().size(); i++) {
+                if(ship.getCargoType().get(i).equals(resource)){
+                    if(ship.getCargoHold().get(i) + howMany > ship.getMaxCargo()){
+                        addLogs("Your cargo hold is now full but you had to waste a few resources since you've found " + howMany + " of this resource.");
+                        ship.getCargoHold().set(i, ship.getMaxCargo());
+                    }
+                    else{
+                        addLogs("You've found " + howMany + "of this resource and it's been added to your cargo.");
+                        ship.getCargoHold().set(i, ship.getCargoHold().get(i) + howMany);
+                    }
+                }
+            }
             return 2;
 
         }

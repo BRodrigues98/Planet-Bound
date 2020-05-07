@@ -7,8 +7,8 @@ public class Drone {
     private String resourceFound;
 
     public Drone() {
-        this.posX = (int) (Math.random() * 6) + 1;
-        this.posY = (int) (Math.random() * 6) + 1;
+        this.posX = 0;
+        this.posY = 0;
         this.hp = 6;
     }
 

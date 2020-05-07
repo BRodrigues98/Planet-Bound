@@ -22,8 +22,6 @@ public class AwaitMovement extends StateAdapter{
             if(whereTo == 0)
                 return new GameOver(game);
             else if(whereTo == 1)
-                return new AwaitPlanetDecision(game);
-            else if(whereTo == 2)
                 return new AwaitDiceRoll(game);
             else
                 return this;

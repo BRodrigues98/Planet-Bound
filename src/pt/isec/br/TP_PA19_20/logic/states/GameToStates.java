@@ -74,6 +74,9 @@ public class GameToStates {
 
     public void makesDecision(int value) { this.state = state.makesDecision(value); }
 
+    public void start() { this.state = state.start(game); }
+
+
     //public void extraConversion() { this.state = state.extraConversion();}
 
     //public String getPosition() { return game.getPosition(); }

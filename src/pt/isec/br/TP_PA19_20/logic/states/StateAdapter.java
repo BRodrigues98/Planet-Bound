@@ -52,4 +52,5 @@ public abstract class StateAdapter implements IStates {
 
     //@Override
     //public IStates extraConversion() { return this; }
+
 }
