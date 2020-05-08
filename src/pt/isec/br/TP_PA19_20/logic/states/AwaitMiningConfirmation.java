@@ -11,4 +11,6 @@ public class AwaitMiningConfirmation extends StateAdapter{
     public IStates returnToShip() {
         return new AwaitMovement(game);
     }
+
+
 }

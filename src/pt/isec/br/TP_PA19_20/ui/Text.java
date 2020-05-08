@@ -1,13 +1,24 @@
 package pt.isec.br.TP_PA19_20.ui;
 
-import com.sun.source.tree.WhileLoopTree;
 import pt.isec.br.TP_PA19_20.logic.states.AwaitMovement;
 import pt.isec.br.TP_PA19_20.logic.states.*;
 
-import java.sql.SQLOutput;
 import java.util.Scanner;
 
 public class Text {
+    //ANSI escape codes
+    //System.out.println(ANSI_RED + "First you must choose your spacehip!" + ANSI_RESET);
+    //https://stackoverflow.com/questions/5762491/how-to-print-color-in-console-using-system-out-println
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_BLACK = "\u001B[30m";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_PURPLE = "\u001B[35m";
+    public static final String ANSI_CYAN = "\u001B[36m";
+    public static final String ANSI_WHITE = "\u001B[37m";
+
     private GameToStates game;
     private Scanner sc;
     private boolean exit;
@@ -41,7 +52,7 @@ public class Text {
 
             game.checkLossConditions();
 
-            //TODO: só podemos minerar cada planeta uma vez, e devemos poder minerar varias vezes. corrigir ASAP
+            //TODO: evento cargo loss faz quando nao temos recursos desse tipo. Está errado e precisa de ser corrigido
         }
 
 
@@ -159,6 +170,8 @@ public class Text {
         do {
             System.out.println("1 - Random Event");
             System.out.println("2 - Forced Event");
+            System.out.println("3 - See your Ship stats");
+
 
             System.out.print(">.");
 
@@ -167,10 +180,15 @@ public class Text {
             value = sc.nextInt();
             sc.nextLine(); //O nextInt não limpa o enter em buffer
         }
-        while (value > 2 || value <= 0);
+        while (value > 3 || value <= 0);
 
         if (value == 1)
             game.roll(1);
+        else if(value == 3){
+            game.currentShipStats();
+            checkLogs();
+            UIAwaitDiceRoll();
+        }
         else{
             do {
                 System.out.println("Which event do you want forced?");
@@ -198,19 +216,25 @@ public class Text {
     private void UIAwaitMiningConfirmation() {
         checkLogs();
         if(game.getDroneResource().equals("artifact")) {
-            if(game.getNumArtifacts() < 5 && game.getNumArtifacts() > 1)
+            if(game.getNumArtifacts() < 5 && game.getNumArtifacts() > 0)
                 System.out.println("Congratulations. You only need " +  (5 - game.getNumArtifacts()) + " more artifacts to win the game.");
-            else if(game.getNumArtifacts() < 5)
+            else if(game.getNumArtifacts() == 4)
                 System.out.println("Congratulations. You only need 1 more artifact to win the game.");
         }
-        //System.out.println("Your Drone is ready to go back to the ship. Press Enter to continue.");
-        //sc.nextLine();
+        System.out.println("You've finished mining this planet. Press Enter to go back to main deck.");
+        sc.nextLine();
 
         game.returnToShip();
     }
 
     private void UIAwaitPlanetDecision() {
         checkLogs();
+        if(game.getTimesMined() > 0) {
+            System.out.println("Press Enter to continue.");
+            sc.nextLine();
+
+            System.out.println("\nYou've mined this planet " + game.getTimesMined() + " times out of " + game.getNumResourcesOnPlanet() + " possible.");
+        }
         System.out.println("What do you want to do?");
         int value, flag;
         do {
@@ -271,10 +295,6 @@ public class Text {
     private void UIAwaitMovement() {
         if(game.isFirstMove()){
             System.out.println("Let's find your first planet!");
-        }
-        else {
-            System.out.println("Press Enter to move to your next position");
-            sc.nextLine();
         }
         game.move(game.isFirstMove());
     }
@@ -350,53 +370,31 @@ public class Text {
         conversion = sc.nextInt();
         sc.nextLine(); //O nextInt não limpa o enter em buffer
         if(conversion == 1){
-            System.out.println("Which resource do you want to craft?"); //black red blue green
-            System.out.println("1 - Black");
-            System.out.println("2 - Red");
-            System.out.println("3 - Blue");
-            System.out.println("4 - Green");
+            do {
+                System.out.println("Which resource do you want to craft?"); //black red blue green
+                System.out.println("1 - Black");
+                System.out.println("2 - Red");
+                System.out.println("3 - Blue");
+                System.out.println("4 - Green");
 
-            while (!sc.hasNextInt())
-                sc.next();
-            resNew = sc.nextInt();
-            sc.nextLine(); //O nextInt não limpa o enter em buffer
+                while (!sc.hasNextInt())
+                    sc.next();
+                resNew = sc.nextInt();
+                sc.nextLine(); //O nextInt não limpa o enter em buffer
 
-            switch (resNew){
-                case 1: {
-                    System.out.println("From which resource?"); //black red blue green
-                    System.out.println("1 - Red");
-                    System.out.println("2 - Blue");
-                    System.out.println("3 - Green");
-                    break;
-                }
-                case 2: {
-                    System.out.println("From which resource?"); //black red blue green
-                    System.out.println("1 - Black");
-                    System.out.println("2 - Blue");
-                    System.out.println("3 - Green");
-                    break;
-                }
-                case 3: {
-                    System.out.println("From which resource?"); //black red blue green
-                    System.out.println("1 - Black");
-                    System.out.println("2 - Red");
-                    System.out.println("3 - Green");
-                    break;
-                }
-                case 4: {
-                    System.out.println("From which resource?"); //black red blue green
-                    System.out.println("1 - Black");
-                    System.out.println("2 - Blue");
-                    System.out.println("3 - Red");
-                    break;
-                }
+                System.out.println("From which resource?"); //black red blue green
+                System.out.println("1 - Black");
+                System.out.println("2 - Red");
+                System.out.println("3 - Blue");
+                System.out.println("4 - Green");
+
+
+                while (!sc.hasNextInt())
+                    sc.next();
+                resOld = sc.nextInt();
+                sc.nextLine(); //O nextInt não limpa o enter em buffer
             }
-
-
-            while (!sc.hasNextInt())
-                sc.next();
-            resOld = sc.nextInt();
-            sc.nextLine(); //O nextInt não limpa o enter em buffer
+            while(resNew == resOld);
             game.convert(resNew - 1, resOld - 1);
         }
         else if(conversion == 2){

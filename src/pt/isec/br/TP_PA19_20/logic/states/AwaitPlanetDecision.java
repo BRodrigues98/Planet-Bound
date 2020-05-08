@@ -17,6 +17,7 @@ public class AwaitPlanetDecision extends StateAdapter{
             game.setPlanet(new BluePlanet());
 
         game.addLogs(game.getPlanet().toString());
+
     }
 
     @Override
@@ -33,6 +34,8 @@ public class AwaitPlanetDecision extends StateAdapter{
             game.addLogs("Sending exploration drone to planet.");
             int mined = game.mine();
             if(mined == 0 || mined == 1) //Don't have a drone || Planet already fully mined || Alien destroyed drone
+                return this;
+            else if(game.getPlanet().getTimesMined() < game.getPlanet().getNumResources())
                 return this;
             else
                 return new AwaitMiningConfirmation(game);

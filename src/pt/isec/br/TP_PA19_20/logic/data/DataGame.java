@@ -138,7 +138,7 @@ public class DataGame {
             case 3:
                 return "Your Shields Officer is dead. Your costs while exploring space are increased until you hire a new member";
             case 4:
-                return "Your Weapons Officer is dead. You can't attack aliens on a planet and your costs while exploring space are increased until you hire a new member";
+                return "Your Weapons Officer is dead. Nothing will happen because the Weapons are useless.";
             case 5:
                 return "Your Cargo Hold Officer is dead. You can't convert your resources or upgrade your ship until you hire a new member";
             default:
@@ -259,10 +259,6 @@ public class DataGame {
             addLogs("Planet already fully mined.");
             return 0;
         }
-        else if(planet.getTimesMined() == planet.getNumResources() - 1 && planet instanceof BluePlanet){
-            addLogs("Planet already fully mined.");
-            return 0;
-        }
         else{
             randomAlien();
             int index = (int) (Math.random() * planet.getNumResources());
@@ -271,6 +267,13 @@ public class DataGame {
             int howMany = 1;
             if(!resource.equals("artifact")){
                 howMany = (int) (Math.random() * 3) + 1;
+            }
+            //Se o artefacto já foi encontrado, cria-se outro recurso mas sem contar com o artefacto
+            else if(planet instanceof BluePlanet){
+                if(((BluePlanet) planet).isFoundArtifact()){
+                    index = (int) (Math.random() * (planet.getNumResources() - 1));
+                    resource = planet.getTypeResource().get(index);
+                }
             }
 
             boolean pickedUp = false;
@@ -381,12 +384,10 @@ public class DataGame {
                 if(ship.getCargoType().get(i).equals(resource)){
                     if(ship.getCargoHold().get(i) + howMany > ship.getMaxCargo()){
                         addLogs("Your cargo hold is now full but you had to waste a few resources since you've found " + howMany + " of this resource.");
-                        planet.setTimesMined(planet.getTimesMined() + 1);
                         ship.getCargoHold().set(i, ship.getMaxCargo());
                     }
                     else{
                         addLogs("You've found " + howMany + " of this resource and it's been added to your cargo.");
-                        planet.setTimesMined(planet.getTimesMined() + 1);
                         ship.getCargoHold().set(i, ship.getCargoHold().get(i) + howMany);
                     }
                 }
@@ -426,6 +427,11 @@ public class DataGame {
                 if (getPlanet().getAlien().getAttack().get(i) == dice) {
                     ship.getDrone().setHp(ship.getDrone().getHp() - 1);
                     addLogs("Your drone took a hit! It has " + ship.getDrone().getHp() + " HP left.");
+                    if(ship.getDrone().getHp() == 0){
+                        ship.setHasDrone(false);
+                        addLogs("Drone destroyed. You must buy a new one at a Space Station to mine resources.");
+                        return true;
+                    }
                 }
             }
             dice = (int) (Math.random() * 6) + 1;
@@ -477,8 +483,8 @@ public class DataGame {
             case 2: {
                 int randomIndex = (int) (Math.random() * 4), howMany = (int) (Math.random() * 6) + 1;
                 if (ship.getCargoHold().get(randomIndex) + howMany > ship.getMaxCargo()) {
-                    ship.getCargoHold().set(randomIndex, (ship.getMaxCargo() - ship.getCargoHold().get(randomIndex)));
-                    addLogs("You've found a salvaged ship. You've found" + ship.getCargoType().get(randomIndex) + " resource in that ship. Unfortunately you had to leave some behind because it filled your cargo hold for that resource.");
+                    ship.getCargoHold().set(randomIndex, ship.getMaxCargo());
+                    addLogs("You've found a salvaged ship. You've found " + ship.getCargoType().get(randomIndex) + " resource in that ship. Unfortunately you had to leave some behind because it filled your cargo hold for that resource.");
                 } else {
                     ship.getCargoHold().set(randomIndex, (ship.getCargoHold().get(randomIndex) + howMany));
                     addLogs("You've found a salvaged ship. You've found " + howMany + " " + ship.getCargoType().get(randomIndex) + " resources in that ship and they have been added to your cargo hold.");
@@ -542,6 +548,10 @@ public class DataGame {
                 //Replenish Drone armor. Costs 1 of each resource.
                 if(!ship.isDrone()) {
                     addLogs("Can't replenish Drone Armor. You must buy a new one at a Space Station.");
+                    return 0;
+                }
+                else if(ship.getDrone().getHp() == 6){
+                    addLogs("Drone at full health.");
                     return 0;
                 }
 

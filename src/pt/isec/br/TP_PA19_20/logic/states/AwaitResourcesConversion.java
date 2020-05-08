@@ -12,4 +12,22 @@ public class AwaitResourcesConversion extends StateAdapter{
         game.addLogs("Going back to main deck");
         return new AwaitPlanetDecision(game);
     }
+
+    @Override
+    public IStates convert(int type) {
+        int converted = game.convert(type);
+        if (converted == 0)
+            return this;
+        else
+            return new AwaitResourcesConversion(game);
+    }
+
+    @Override
+    public IStates convert(int resNew, int resOld) {
+        int converted = game.convert(resNew, resOld);
+        if (converted == 0)
+            return this;
+        else
+            return new AwaitResourcesConversion(game);
+    }
 }

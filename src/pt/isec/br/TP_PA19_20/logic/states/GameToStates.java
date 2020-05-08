@@ -80,6 +80,10 @@ public class GameToStates {
 
     public void checkLossConditions() { this.state = state.checkLossConditions();}
 
+    public int getTimesMined() { return game.getPlanet().getTimesMined(); }
+
+    public int getNumResourcesOnPlanet() { return game.getPlanet().getNumResources(); }
+
 
     //public void extraConversion() { this.state = state.extraConversion();}
 
