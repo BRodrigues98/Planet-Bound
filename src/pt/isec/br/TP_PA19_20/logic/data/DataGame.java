@@ -6,6 +6,7 @@ import pt.isec.br.TP_PA19_20.logic.data.planet.alien.*;
 import pt.isec.br.TP_PA19_20.logic.data.ship.Drone;
 import pt.isec.br.TP_PA19_20.logic.data.ship.Mining;
 import pt.isec.br.TP_PA19_20.logic.data.ship.Ship;
+import pt.isec.br.TP_PA19_20.logic.states.IStates;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +29,10 @@ public class DataGame {
     //private String previousPosition;
     private boolean firstMove;
     private Planet planet;
+    private Planet savedPlanet;
     private List<String> events;
     private boolean wasRedDot;
-
+    IStates state;
 
 
     //------------ CONSTRUCTOR ------------
@@ -53,6 +55,7 @@ public class DataGame {
         //previousPosition = null;
         firstMove = true;
         planet = null;
+        savedPlanet = null;
 
         events = new ArrayList<>();
         events.add("Crew Death");
@@ -70,6 +73,7 @@ public class DataGame {
         positions.add("Weapons Officer");
         positions.add("Cargo Hold Officer");
         wasRedDot = false;
+        state = null;
     }
     //------------ GETTERS/SETTERS ------------
 
@@ -110,6 +114,14 @@ public class DataGame {
     public boolean isWasRedDot() { return wasRedDot; }
 
     public void setWasRedDot(boolean wasRedDot) { this.wasRedDot = wasRedDot; }
+
+    public Planet getSavedPlanet() { return savedPlanet; }
+
+    public void setSavedPlanet(Planet savedPlanet) { this.savedPlanet = savedPlanet; }
+
+    public IStates getState() { return state; }
+
+    public void setState(IStates state) { this.state = state; }
 
     //-----------------------------------------
 
@@ -164,7 +176,6 @@ public class DataGame {
             if(ship.getShieldSystem() >= shieldToLose) {
                 ship.setShieldSystem(ship.getShieldSystem() - shieldToLose);
                 ship.setFuel(ship.getFuel() - fuelToLose);
-
                 if(ship.getFuel() <= 0) {
                     addLogs("You've ran out of fuel.");
                     return 0;
@@ -172,6 +183,8 @@ public class DataGame {
                 else {
                     //game.setPreviousPosition(game.getPosition());
                     //game.setPosition("planet");
+                    addLogs("You've lost " + shieldToLose + " shield cells. You now have " + ship.getShieldSystem() + " cells.");
+                    addLogs("You've lost " + fuelToLose + " fuel. You now have " + ship.getFuel() + " fuel left.");
                     addLogs("Exiting wormhole.");
                     if(!wasRedDot) {
                         addLogs("New event about to happen. Hold tight.");
@@ -195,6 +208,7 @@ public class DataGame {
                         break;
                     }
                 }
+                addLogs("Because you didn't have enough shield cells, one of your officers is going to die and you lose an extra 2 fuel.");
                 addLogs(officerKilled(index));
                 officers.set(index, false);
                 ship.setFuel(ship.getFuel() - 2);
@@ -429,6 +443,7 @@ public class DataGame {
                     addLogs("Your drone took a hit! It has " + ship.getDrone().getHp() + " HP left.");
                     if(ship.getDrone().getHp() == 0){
                         ship.setHasDrone(false);
+                        ship.setDrone(null);
                         addLogs("Drone destroyed. You must buy a new one at a Space Station to mine resources.");
                         return true;
                     }
@@ -445,6 +460,7 @@ public class DataGame {
         while(ship.getDrone().getHp() > 0);
 
         ship.setHasDrone(false);
+        ship.setDrone(null);
         addLogs("Drone destroyed. You must buy a new one at a Space Station to mine resources.");
         return true;
     }
@@ -459,9 +475,9 @@ public class DataGame {
         addLogs("Event about to happen: " + events.get(rand - 1) );
 
         switch (rand){
-            case 1: {
+            case 1: {   //Crew member death
                 addLogs("A crew member is injured due to a system malfunction.");
-                if (ship.getExtraMember().isEmpty()) {
+                if (ship.getExtraMember().isEmpty()) {  //Verifica se existe algum officer nos extra
                     int index = 0;
                     //Procura o último officer vivo e guarda o indice em index
                     for (int i = officers.size() - 1; i >= 0; i--) {
@@ -474,13 +490,13 @@ public class DataGame {
                     addLogs(officerKilled(index));
                     officers.set(index, false);
                 }
-                else {
+                else {  //Caso exista, mata primeiro os extra
                     ship.getExtraMember().remove(ship.getExtraMember().size() - 1);
                 }
 
                 break;
             }
-            case 2: {
+            case 2: {   //Salvage ship - extra resources
                 int randomIndex = (int) (Math.random() * 4), howMany = (int) (Math.random() * 6) + 1;
                 if (ship.getCargoHold().get(randomIndex) + howMany > ship.getMaxCargo()) {
                     ship.getCargoHold().set(randomIndex, ship.getMaxCargo());
@@ -491,9 +507,18 @@ public class DataGame {
                 }
                 break;
             }
-            case 3: {
-                int randomIndex = (int) (Math.random() * 4), howMany = (int) (Math.random() * 3) + 1;
+            case 3: {   //Cargo loss.
+                int randomIndex = 0, howMany = (int) (Math.random() * 3) + 1;
+                boolean flag = false;
+                do{
+                    randomIndex = (int) (Math.random() * 4);
+                    if(ship.getCargoHold().get(randomIndex) == 0)
+                        flag = true;
+                    else if(ship.getCargoHold().get(randomIndex) > 0)
+                        flag = false;
 
+                }
+                while(flag);
                 if(howMany > ship.getCargoHold().get(randomIndex))
                     ship.getCargoHold().set(randomIndex, 0);
                 else
@@ -502,18 +527,18 @@ public class DataGame {
                 addLogs("You've had a cargo loss. You now have " + ship.getCargoHold().get(randomIndex) + " " + ship.getCargoType().get(randomIndex) + " resources.");
                 break;
             }
-            case 4: {
+            case 4: {   //Fuel loss
                 ship.setFuel(ship.getFuel() - 1);
                 addLogs("You've accidentally used too much fuel on a fuel run. You now have " + ship.getFuel() + ".");
                 break;
             }
-            case 5: {
+            case 5: {   //Nothing happens
                 addLogs("Fortunately, nothing happened. Smooth sailing.");
                 break;
             }
-            case 6: {
+            case 6: {   //New crew member
                 boolean fNewOfficer = false;
-                for (int i = 0; i < officers.size(); i++) {
+                for (int i = 0; i < officers.size(); i++) { //Procura se algum dos crew members originais está morto
                     if(!officers.get(i)){
                         officers.set(i, true);
                         fNewOfficer = true;
@@ -521,6 +546,7 @@ public class DataGame {
                     }
                 }
 
+                //Caso estejam todos vivos, é adicionado a lista de crew members extra
                 if(!fNewOfficer)
                     ship.getExtraMember().add(true);
 
@@ -577,6 +603,11 @@ public class DataGame {
                     }
                 }
 
+                if(ship.getShieldSystem() == ship.getMaxShield()){
+                    addLogs("Your shield systems is already at max charge!");
+                    return 0;
+                }
+
                 for (int i = 0; i < ship.getCargoHold().size(); i++) {
                     if(i != 1)
                         ship.getCargoHold().set(i, ship.getCargoHold().get(i) - 1);
@@ -594,6 +625,14 @@ public class DataGame {
                     }
                 }
 
+                 //For testing: ship.setWeaponSystem(5);
+
+                if(ship.getWeaponSystem() == ship.getMaxWeapon()) {
+                    addLogs("Your weapons system is already at max charge!");
+                    return 0;
+                }
+
+
                 for (int i = 0; i < ship.getCargoHold().size(); i++) {
                     if(i != 1 && i != 3)
                         ship.getCargoHold().set(i, ship.getCargoHold().get(i) - 1);
@@ -609,6 +648,11 @@ public class DataGame {
                         addLogs("Insufficient " + ship.getCargoType().get(i) + " resources.");
                         return 0;
                     }
+                }
+
+                if(ship.getFuel() == ship.getMaxFuel()){
+                    addLogs("Fuel is already at max capacity.");
+                    return 0;
                 }
 
                 for (int i = 0; i < ship.getCargoHold().size(); i++) {
@@ -668,7 +712,7 @@ public class DataGame {
 
                 ship.setCargoHoldLvl(ship.getCargoHoldLvl() + 1);
                 ship.setMaxCargo(ship.getMaxCargo() + 6);
-                addLogs("Your cargo hold level is now at level " + ship.getCargoHoldLvl() + " and can carry up to" + ship.getMaxCargo() + " of each resource.");
+                addLogs("Your cargo hold level is now at level " + ship.getCargoHoldLvl() + " and can carry up to " + ship.getMaxCargo() + " of each resource.");
 
                 return 1;
 
@@ -682,7 +726,7 @@ public class DataGame {
 
 
                 for (int i = 0; i < officers.size(); i++) {
-                    if(!officers.get(i)){
+                    if(!officers.get(i)){ //Se o officer na posicao i estiver morto, arranja-se um novo
                         for (int j = 0; j < ship.getCargoHold().size(); j++)
                             ship.getCargoHold().set(j, ship.getCargoHold().get(j) - 1);
                         officers.set(i, true);
@@ -717,6 +761,7 @@ public class DataGame {
 
                     ship.setWeaponLevel(2);
                     ship.setWeaponSystem(18);
+                    ship.setMaxWeapon(18);
                     addLogs("Weapons System upgraded.");
                     return 1;
                 }
@@ -738,7 +783,7 @@ public class DataGame {
 
                 ship.setHasDrone(true);
                 ship.setDrone(new Drone());
-                addLogs("New Drone bought");
+                addLogs("New Drone bought.");
                 return 1;
             default:
                 return 0;
@@ -753,6 +798,12 @@ public class DataGame {
             }
         }
 
+        addLogs("Ship Stats:");
+        if(ship.getDrone() == null)
+            addLogs("Drone: DEAD");
+        else
+            addLogs("Drone:\n" + ship.getDrone().getHp() + " hp");
+
         addLogs("\nWeapons System cells: " + ship.getWeaponSystem() + "\nShield System cells: " + ship.getShieldSystem() + "\nFuel cells: " + ship.getFuel());
 
         addLogs("Cargo Hold (Level " + ship.getCargoHoldLvl() + " -> " + ship.getMaxCargo() + " max for each resource):");
@@ -760,5 +811,9 @@ public class DataGame {
             addLogs(ship.getCargoType().get(i) + " resources: " + ship.getCargoHold().get(i));
         }
         addLogs("Artifacts: " + ship.getNumArtifacts());
+    }
+
+    public void debug() {
+
     }
 }

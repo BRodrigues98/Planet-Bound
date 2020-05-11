@@ -52,7 +52,6 @@ public class Text {
 
             game.checkLossConditions();
 
-            //TODO: evento cargo loss faz quando nao temos recursos desse tipo. Está errado e precisa de ser corrigido
         }
 
 
@@ -90,56 +89,69 @@ public class Text {
     private void UIAwaitSSDecision() {
         checkLogs();
         System.out.println("What do you want to do?");
-        int value, flag;
+        int value = 0, flag = 0;
         do {
             System.out.println("1 - Upgrade your cargo hold by one section. Costs two of each resource.");
             System.out.println("2 - Hire a crew member. Costs one of each resource.");
             System.out.println("3 - Upgrade your weapon system. Costs two of each resource.");
             System.out.println("4 - Purchase a new mining drone. Costs two of each resource.");
-            System.out.println("5 - See your ship stats.");
+            System.out.println("5 - Cancel and go back.");
+            System.out.println("6 - See your ship stats.");
+
             System.out.print(">.");
 
             while (!sc.hasNextInt())
                 sc.next();
             value = sc.nextInt();
             sc.nextLine();
+        }
+        while(value > 6);
 
-            if(value == 5){
+            if(value == 6){
                 game.currentShipStats();
                 checkLogs();
-                UIAwaitSSDecision();
+                return;
             }
-            if(value > 0 && value < 5) {
+            else if(value == 5){
+                game.backToPlanet();
+            }
+            else if(value > 0) {
                 game.makesDecision(value);
             }
 
-            System.out.println("Do you want to convert more?");
-            System.out.println("1 - Yes");
-            System.out.println("2 - No");
-            System.out.print(">.");
+            if(value != 5) {
+                do {
+                    checkLogs(); // Se a conversão do recurso não funcionar, ficam coisas pendentes
+                    System.out.println("Do you want to convert more?");
+                    System.out.println("1 - Yes");
+                    System.out.println("2 - No");
+                    System.out.print(">.");
 
-            while (!sc.hasNextInt())
-                sc.next();
-            flag = sc.nextInt();
-            sc.nextLine();
+                    while (!sc.hasNextInt())
+                        sc.next();
+                    flag = sc.nextInt();
+                    sc.nextLine();
+                }
+                while (flag > 2);
 
-            if(flag == 1)
-                UIAwaitSSDecision();
-
-
-        }
-        while(value > 5);
+                if (flag == 2) {
+                    game.backToPlanet();
+                }
+                else
+                    return;
+            }
 
     }
 
     private void UIAwaitResourcesConversion() {
-        checkLogs();
-        System.out.println("Conversion successful. What do you want to do next?");
+        //checkLogs();
+        System.out.println("What do you want to do next?");
 
         int value;
         do {
+            checkLogs();
             System.out.println("1 - Convert more resources.");
-            System.out.println("2 - Go back to the main deck.");
+            System.out.println("2 - Go back.");
             System.out.println("3 - See your ship stats.");
             System.out.print(">.");
 
@@ -148,18 +160,20 @@ public class Text {
             value = sc.nextInt();
             sc.nextLine();
 
-            if (value == 1) {
-                craftOptions();
-            } else if (value == 2) {
-                game.stopConvert();
-            }
-            else if(value == 3){
+            if(value == 3){
                 game.currentShipStats();
                 checkLogs();
-                UIAwaitResourcesConversion();
+                return;
             }
+
         }
         while(value > 2);
+
+        if (value == 1)
+            craftOptions();
+        else if (value == 2)
+            game.stopConvert();
+
     }
 
     private void UIAwaitDiceRoll() {
@@ -187,7 +201,7 @@ public class Text {
         else if(value == 3){
             game.currentShipStats();
             checkLogs();
-            UIAwaitDiceRoll();
+            return;
         }
         else{
             do {
@@ -215,16 +229,67 @@ public class Text {
 
     private void UIAwaitMiningConfirmation() {
         checkLogs();
-        if(game.getDroneResource().equals("artifact")) {
-            if(game.getNumArtifacts() < 5 && game.getNumArtifacts() > 0)
-                System.out.println("Congratulations. You only need " +  (5 - game.getNumArtifacts()) + " more artifacts to win the game.");
-            else if(game.getNumArtifacts() == 4)
-                System.out.println("Congratulations. You only need 1 more artifact to win the game.");
-        }
-        System.out.println("You've finished mining this planet. Press Enter to go back to main deck.");
-        sc.nextLine();
 
-        game.returnToShip();
+        if (game.getDroneResource() != null && game.getDroneResource().equals("artifact")) {
+            if (game.getNumArtifacts() == 4)
+                System.out.println("Congratulations. You only need 1 more artifact to win the game.");
+            else if (game.getNumArtifacts() < 5 && game.getNumArtifacts() > 0)
+                System.out.println("Congratulations. You only need " + (5 - game.getNumArtifacts()) + " more artifacts to win the game.");
+        }
+
+
+        int value, flag;
+        do {
+            System.out.println("What do you want to do now?");
+            System.out.println("1 - Proceed to next planet");
+            //System.out.println("2 - Convert your ship resources");
+            if(game.isSpaceStation()){
+                System.out.println("2 - Land on Space Station.");
+                System.out.println("3 - Convert Resources");
+                System.out.println("4 - See your Ship stats");
+                flag = 4;
+            }
+            else {
+                System.out.println("2 - Convert Resources");
+                System.out.println("3 - See your Ship stats");
+
+                flag = 3;
+            }
+
+
+            System.out.print(">.");
+
+            while (!sc.hasNextInt())
+                sc.next();
+            value = sc.nextInt();
+            sc.nextLine(); //O nextInt não limpa o enter em buffer
+            if(flag == 3) {
+                if (value == 1)
+                    game.nextTurn();
+                else if(value == 2)
+                    craftOptions();
+                else if (value == 3) {
+                    game.currentShipStats();
+                    checkLogs();
+                    return;
+                }
+            }
+            else{
+                if (value == 1)
+                    game.nextTurn();
+                else if (value == 2) {
+                    game.landOnSS();
+                }
+                else if(value == 3)
+                    craftOptions();
+                else {
+                    game.currentShipStats();
+                    checkLogs();
+                    return;
+                }
+            }
+        }
+        while (value > flag || value <= 0);
     }
 
     private void UIAwaitPlanetDecision() {
@@ -235,17 +300,21 @@ public class Text {
 
             System.out.println("\nYou've mined this planet " + game.getTimesMined() + " times out of " + game.getNumResourcesOnPlanet() + " possible.");
         }
-        System.out.println("What do you want to do?");
+
         int value, flag;
         do {
-            System.out.println("1 - Land and mine the planet");
             if (game.isSpaceStation()) {
+                System.out.println("This planet also has a Space Station in its orbit!");
+                System.out.println("What do you want to do?");
+                System.out.println("1 - Land and mine the planet");
                 System.out.println("2 - Land on Space Station");
                 System.out.println("3 - Convert Resources");
                 System.out.println("4 - Ignore this planet and keep going");
                 System.out.println("5 - See your Ship stats");
                 flag = 5;
             } else {
+                System.out.println("What do you want to do?");
+                System.out.println("1 - Land and mine the planet");
                 System.out.println("2 - Convert Resources");
                 System.out.println("3 - Keep going");
                 System.out.println("4 - See your Ship stats");
@@ -262,9 +331,12 @@ public class Text {
             if (value == 1)
                 game.land();
             else if(flag == 5){
-                if(value == 2)
+                if(value == 2) {
+                    game.savePlanet();
                     game.landOnSS();
+                }
                 else if(value == 3) {
+                    game.savePlanet();
                     craftOptions();
                 }
                 else if(value == 4)
@@ -272,11 +344,12 @@ public class Text {
                 else if(value == 5){
                     game.currentShipStats();
                     checkLogs();
-                    UIAwaitPlanetDecision();
+                    return;
                 }
             }
             else{
                 if(value == 2) {
+                    game.savePlanet();
                     craftOptions();
                 }
                 else if(value == 3)
@@ -284,7 +357,7 @@ public class Text {
                 else if(value == 4){
                     game.currentShipStats();
                     checkLogs();
-                    UIAwaitPlanetDecision();
+                    return;
                 }
             }
 

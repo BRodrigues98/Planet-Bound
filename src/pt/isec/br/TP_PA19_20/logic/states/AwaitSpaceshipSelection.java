@@ -20,7 +20,7 @@ public class AwaitSpaceshipSelection extends StateAdapter{
         }
 
         //game.setPosition("stopped");
-
+        game.getShip().setFuel(0);
         return new AwaitMovement(game);
     }
 }

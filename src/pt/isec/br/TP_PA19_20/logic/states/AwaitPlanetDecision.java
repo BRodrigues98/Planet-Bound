@@ -6,17 +6,24 @@ import pt.isec.br.TP_PA19_20.logic.data.planet.*;
 public class AwaitPlanetDecision extends StateAdapter{
     public AwaitPlanetDecision(DataGame game) {
         super(game);
-        double rand = Math.random();
-        if(rand <= 0.25)
-            game.setPlanet(new GreenPlanet());
-        else if(rand > 0.25 && rand <= 0.5)
-            game.setPlanet(new BlackPlanet());
-        else if(rand > 0.5 && rand >= 0.75)
-            game.setPlanet(new RedPlanet());
-        else
-            game.setPlanet(new BluePlanet());
+        game.setState(this);
+        if(game.getSavedPlanet() != null){
+            game.setPlanet(game.getSavedPlanet());
+            game.setSavedPlanet(null);
+        }
+        else {
+            double rand = Math.random();
+            if (rand <= 0.25)
+                game.setPlanet(new GreenPlanet());
+            else if (rand > 0.25 && rand <= 0.5)
+                game.setPlanet(new BlackPlanet());
+            else if (rand > 0.5 && rand >= 0.75)
+                game.setPlanet(new RedPlanet());
+            else
+                game.setPlanet(new BluePlanet());
 
-        game.addLogs(game.getPlanet().toString());
+            game.addLogs(game.getPlanet().toString());
+        }
 
     }
 
@@ -49,7 +56,7 @@ public class AwaitPlanetDecision extends StateAdapter{
     public IStates nextTurn() {
         if(game.getShip().getNumArtifacts() < 5) {
             game.addLogs("Exiting planet");
-            return new AwaitMovement(game);
+            return new AwaitMiningConfirmation(game);
         }
         else {
             game.addLogs("You've won the game! Congratulations.");

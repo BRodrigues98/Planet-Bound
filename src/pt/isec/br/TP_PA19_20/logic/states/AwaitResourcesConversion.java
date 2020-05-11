@@ -10,7 +10,13 @@ public class AwaitResourcesConversion extends StateAdapter{
     @Override
     public IStates stopConvert() {
         game.addLogs("Going back to main deck");
-        return new AwaitPlanetDecision(game);
+        //return new AwaitDiceRoll(game);
+        if(game.getState() instanceof AwaitPlanetDecision)
+            return new AwaitPlanetDecision(game);
+        else if(game.getState() instanceof AwaitMiningConfirmation)
+            return new AwaitMiningConfirmation(game);
+        else
+            return this;
     }
 
     @Override

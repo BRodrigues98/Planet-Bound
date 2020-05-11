@@ -52,11 +52,17 @@ public abstract class StateAdapter implements IStates {
 
     @Override
     public IStates checkLossConditions() {
-        if(game.getShip().getFuel() == 0 || !game.getOfficers().get(0)) //Sem fuel ou captain morto
-            return new GameOver(game);
-        else
-            return this;
+        if(game.getShip() != null) {
+            if (game.getShip().getFuel() == 0 || !game.getOfficers().get(0)) //Sem fuel ou captain morto
+                return new GameOver(game);
+            else
+                return this;
+        }
+        return this;
     }
+
+    @Override
+    public IStates backToPlanet() { return this; }
 
     //@Override
     //public IStates extraConversion() { return this; }

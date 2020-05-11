@@ -1,9 +1,6 @@
 package pt.isec.br.TP_PA19_20.logic.states;
 
 import pt.isec.br.TP_PA19_20.logic.data.DataGame;
-import pt.isec.br.TP_PA19_20.logic.data.planet.Planet;
-import pt.isec.br.TP_PA19_20.logic.data.ship.Military;
-import pt.isec.br.TP_PA19_20.logic.data.ship.Mining;
 
 import java.util.List;
 
@@ -44,7 +41,12 @@ public class GameToStates {
 
     public void nextTurn() { this.state = state.nextTurn(); }
 
-    public String getDroneResource() { return game.getShip().getDrone().getResourceFound(); }
+    public String getDroneResource() {
+        if(game.getShip().getDrone() == null)
+            return null;
+
+        return game.getShip().getDrone().getResourceFound();
+    }
 
     public int getNumArtifacts() { return game.getShip().getNumArtifacts(); }
 
@@ -62,7 +64,12 @@ public class GameToStates {
 
     public void convert(int resNew, int resOld) { this.state = state.convert(resNew, resOld); }
 
-    public int getDroneArmor() { return game.getShip().getDrone().getHp(); }
+    public int getDroneArmor() {
+        if(game.getShip().getDrone() == null)
+            return 0;
+        else
+            return game.getShip().getDrone().getHp();
+    }
 
     public int getShipShield() { return game.getShip().getShieldSystem(); }
 
@@ -83,6 +90,10 @@ public class GameToStates {
     public int getTimesMined() { return game.getPlanet().getTimesMined(); }
 
     public int getNumResourcesOnPlanet() { return game.getPlanet().getNumResources(); }
+
+    public void savePlanet() { game.setSavedPlanet(game.getPlanet());}
+
+    public void backToPlanet() { this.state = state.backToPlanet(); }
 
 
     //public void extraConversion() { this.state = state.extraConversion();}
