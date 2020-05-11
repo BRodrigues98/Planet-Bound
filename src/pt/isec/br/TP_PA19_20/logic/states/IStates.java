@@ -16,5 +16,7 @@ public interface IStates {
     IStates roll(int type);
     IStates stopConvert();
     IStates checkLossConditions();
+
+    IStates backToPlanet();
     //IStates extraConversion();
 }

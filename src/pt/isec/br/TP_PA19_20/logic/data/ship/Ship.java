@@ -7,7 +7,10 @@ import java.util.List;
 public abstract class Ship {
     protected int weaponSystem;
     protected int shieldSystem;
+    protected int maxWeapon;
+    protected int maxShield;
     protected int fuel;
+    protected int maxFuel;
     protected List<Integer> cargoHold;
     protected List<String> cargoType;
     /*
@@ -18,13 +21,12 @@ public abstract class Ship {
      */
     protected int cargoHoldLvl;
     protected int maxCargo;
-    protected int maxLevel;
+    protected int maxLevel; //Nivel do cargo hold
     protected int numArtifacts;
     protected Drone drone;
     protected boolean hasDrone;
     protected List<Boolean> extraMember;
-    private int weaponLevel;
-
+    protected int weaponLevel;
 
     public Ship() {
         weaponSystem = 9;
@@ -67,9 +69,7 @@ public abstract class Ship {
         this.shieldSystem = shieldSystem;
     }
 
-    public int getFuel() {
-        return fuel;
-    }
+    public int getFuel() { return fuel; }
 
     public void setFuel(int fuel) { this.fuel = fuel; }
 
@@ -121,8 +121,22 @@ public abstract class Ship {
 
     public void setWeaponLevel(int weaponLevel) { this.weaponLevel = weaponLevel; }
 
-    //-----------------------------------------
+    public int getMaxShield() { return maxShield; }
 
+    public void setMaxShield(int maxShield) { this.maxShield = maxShield; }
+
+    public int getMaxWeapon() { return maxWeapon; }
+
+    public void setMaxWeapon(int maxWeapon) { this.maxWeapon = maxWeapon; }
+
+    public int getMaxFuel() { return maxFuel; }
+
+    public void setMaxFuel(int maxFuel) { this.maxFuel = maxFuel; }
+
+    //-----------------------------------------
+    public void debug(){
+
+    }
 
     @Override
     public String toString() {
@@ -134,4 +148,6 @@ public abstract class Ship {
                 ", cargoHoldLvl=" + cargoHoldLvl +
                 '}';
     }
+
+
 }

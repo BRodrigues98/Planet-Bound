@@ -8,6 +8,17 @@ public class Military extends Ship {
         fuel = 35;
         shieldSystem = 9;
         maxLevel = 2;
+        maxShield = 9;
+        maxWeapon = 9;
+        maxFuel = 35;
+    }
+
+    @Override
+    public void debug() {
+        for (int i = 0; i < cargoHold.size(); i++) {
+            cargoHold.set(i, 5);
+        }
+
     }
 
     @Override

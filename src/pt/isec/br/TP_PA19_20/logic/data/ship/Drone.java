@@ -10,6 +10,7 @@ public class Drone {
         this.posX = 0;
         this.posY = 0;
         this.hp = 6;
+        resourceFound = null;
     }
 
 

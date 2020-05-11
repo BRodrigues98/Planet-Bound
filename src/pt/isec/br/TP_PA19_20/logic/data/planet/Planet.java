@@ -3,6 +3,7 @@ package pt.isec.br.TP_PA19_20.logic.data.planet;
 import pt.isec.br.TP_PA19_20.logic.data.planet.alien.Alien;
 
 import java.util.List;
+import java.util.Objects;
 
 public abstract class Planet {
     protected boolean spaceStation;
@@ -76,6 +77,22 @@ public abstract class Planet {
 
     //-----------------------------------------
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Planet planet = (Planet) o;
+        return spaceStation == planet.spaceStation &&
+                numResources == planet.numResources &&
+                timesMined == planet.timesMined &&
+                Objects.equals(typeResource, planet.typeResource);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(spaceStation, numResources, timesMined, typeResource);
+    }
 
     @Override
     public String toString() {

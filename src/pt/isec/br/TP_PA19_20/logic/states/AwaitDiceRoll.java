@@ -15,8 +15,10 @@ public class AwaitDiceRoll  extends StateAdapter{
         int roll = game.roll(type);
         if(roll == 0)
             return new GameOver(game);
-        else if(roll == 1)
+        else if(roll == 1) {
+            game.setWasRedDot(true);    //Resolve o bug de 2 rolls seguidos após conversão
             return new AwaitMovement(game);
+        }
         else
             return this;
     }
