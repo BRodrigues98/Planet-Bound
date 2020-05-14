@@ -2,6 +2,7 @@ package pt.isec.br.TP_PA19_20.logic.states;
 
 import pt.isec.br.TP_PA19_20.logic.data.DataGame;
 
+
 public abstract class StateAdapter implements IStates {
     protected DataGame game;
 
@@ -12,10 +13,7 @@ public abstract class StateAdapter implements IStates {
     public void setGame(DataGame game) { this.game = game; }
 
     @Override
-    public IStates start(DataGame game) {
-        game.addLogs("Welcome to Planet Bound! Your game is about to start!\nHave fun!");
-        return new AwaitSpaceshipSelection(game);
-    }
+    public IStates start(DataGame game) { return this; }
 
     @Override
     public IStates selectShip(int value) { return this; }
@@ -53,7 +51,11 @@ public abstract class StateAdapter implements IStates {
     @Override
     public IStates checkLossConditions() {
         if(game.getShip() != null) {
-            if (game.getShip().getFuel() == 0 || !game.getOfficers().get(0)) //Sem fuel ou captain morto
+            if(!game.getOfficers().get(0))
+                return new GameOver(game);
+            else if (game.getShip().getFuel() <= 0 && !game.isAlreadyHadChance())
+                return new LastChance(game);
+            else if (game.getShip().getFuel() <= 0)
                 return new GameOver(game);
             else
                 return this;
@@ -63,6 +65,12 @@ public abstract class StateAdapter implements IStates {
 
     @Override
     public IStates backToPlanet() { return this; }
+
+    @Override
+    public IStates lastChance() { return this; }
+
+    @Override
+    public IStates end() { return this; }
 
     //@Override
     //public IStates extraConversion() { return this; }

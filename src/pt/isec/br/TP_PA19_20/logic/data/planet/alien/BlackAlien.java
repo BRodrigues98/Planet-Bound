@@ -1,8 +1,6 @@
 package pt.isec.br.TP_PA19_20.logic.data.planet.alien;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 
 public class BlackAlien extends Alien {
     public BlackAlien(int dronePosX, int dronePosY) {

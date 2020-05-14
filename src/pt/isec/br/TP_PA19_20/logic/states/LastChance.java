@@ -2,21 +2,17 @@ package pt.isec.br.TP_PA19_20.logic.states;
 
 import pt.isec.br.TP_PA19_20.logic.data.DataGame;
 
-public class AwaitResourcesConversion extends StateAdapter{
-    public AwaitResourcesConversion(DataGame game) {
+public class LastChance extends StateAdapter {
+
+    public LastChance(DataGame game) {
         super(game);
+        game.getShip().setFuel(0);
+        //game.setState(this);
     }
 
     @Override
-    public IStates stopConvert() {
-        game.addLogs("Going back to main deck");
-        //return new AwaitDiceRoll(game);
-        if(game.getState() instanceof AwaitPlanetDecision || game.getState() instanceof AwaitDiceRoll)
-            return new AwaitPlanetDecision(game);
-        else if(game.getState() instanceof AwaitMiningConfirmation)
-            return new AwaitMiningConfirmation(game);
-        else
-            return this;
+    public IStates end() {
+        return new GameOver(game);
     }
 
     @Override

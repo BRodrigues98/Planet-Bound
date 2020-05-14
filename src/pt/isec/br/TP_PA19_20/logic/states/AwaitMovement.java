@@ -6,7 +6,7 @@ public class AwaitMovement extends StateAdapter{
 
     public AwaitMovement(DataGame game) {
         super(game);
-
+        game.setState(this);
     }
 
     @Override
@@ -25,6 +25,11 @@ public class AwaitMovement extends StateAdapter{
                 return new AwaitDiceRoll(game);
             else if(whereTo == 2)
                 return new AwaitPlanetDecision(game);
+            else if(whereTo == -1) {
+                if(!game.getOfficers().get(game.getOfficers().size() - 1))
+                    return new GameOver(game);
+                return new LastChance(game);
+            }
             else
                 return this;
         }

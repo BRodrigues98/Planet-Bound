@@ -7,7 +7,7 @@ public class AwaitDiceRoll  extends StateAdapter{
 
     public AwaitDiceRoll(DataGame game) {
         super(game);
-
+        game.setState(this);
     }
 
     @Override
@@ -15,6 +15,11 @@ public class AwaitDiceRoll  extends StateAdapter{
         int roll = game.roll(type);
         if(roll == 0)
             return new GameOver(game);
+        else if(roll == -1){
+            if(!game.getOfficers().get(game.getOfficers().size() - 1))
+                return new GameOver(game);
+            return new LastChance(game);
+        }
         else if(roll == 1) {
             game.setWasRedDot(true);    //Resolve o bug de 2 rolls seguidos após conversão
             return new AwaitMovement(game);

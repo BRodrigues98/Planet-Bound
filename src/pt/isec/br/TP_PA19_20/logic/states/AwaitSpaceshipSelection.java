@@ -7,6 +7,7 @@ import pt.isec.br.TP_PA19_20.logic.data.ship.Mining;
 public class AwaitSpaceshipSelection extends StateAdapter{
     public AwaitSpaceshipSelection(DataGame game) {
         super(game);
+        game.setState(this);
     }
 
 
@@ -20,7 +21,10 @@ public class AwaitSpaceshipSelection extends StateAdapter{
         }
 
         //game.setPosition("stopped");
-        game.getShip().setFuel(0);
+        game.getShip().setFuel(1);
+        for (int i = 0; i < game.getShip().getCargoHold().size(); i++) {
+            game.getShip().getCargoHold().set(i, 6);
+        }
         return new AwaitMovement(game);
     }
 }
