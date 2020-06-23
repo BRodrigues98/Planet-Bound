@@ -1,23 +1,28 @@
 package pt.isec.br.TP_PA19_20.logic.data;
 
+import pt.isec.br.TP_PA19_20.integration.StateID;
+import pt.isec.br.TP_PA19_20.integration.Type;
 import pt.isec.br.TP_PA19_20.logic.data.planet.BluePlanet;
 import pt.isec.br.TP_PA19_20.logic.data.planet.Planet;
 import pt.isec.br.TP_PA19_20.logic.data.planet.alien.*;
 import pt.isec.br.TP_PA19_20.logic.data.ship.Drone;
 import pt.isec.br.TP_PA19_20.logic.data.ship.Mining;
 import pt.isec.br.TP_PA19_20.logic.data.ship.Ship;
+import pt.isec.br.TP_PA19_20.logic.states.AwaitSpaceshipSelection;
 import pt.isec.br.TP_PA19_20.logic.states.IStates;
-import pt.isec.br.TP_PA19_20.ui.Colors;
+import pt.isec.br.TP_PA19_20.ui.text.Colors;
 import utils.UtilFile;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-public class DataGame{
+public class DataGame implements Serializable {
     private List<String> logs;
     private Ship ship;
     private List<Boolean> officers;
@@ -39,7 +44,6 @@ public class DataGame{
     private List<String> events;
     private boolean wasRedDot;
     private boolean alreadyHadChance;
-    IStates state;
 
 
     //------------ CONSTRUCTOR ------------
@@ -73,14 +77,13 @@ public class DataGame{
         events.add("Crew Rescue");
 
         positions = new ArrayList<>();
-        positions.add(Colors.ANSI_YELLOW + "Captain" + Colors.ANSI_RESET);
-        positions.add(Colors.ANSI_BLUE + "Navigation Officer" + Colors.ANSI_RESET);
-        positions.add(Colors.ANSI_RED + "Landing Party / Exploration Officer" + Colors.ANSI_RESET);
-        positions.add(Colors.ANSI_PURPLE + "Shields Officer" + Colors.ANSI_RESET);
-        positions.add(Colors.ANSI_CYAN + "Weapons Officer" + Colors.ANSI_RESET);
-        positions.add(Colors.ANSI_GREEN + "Cargo Hold Officer" + Colors.ANSI_RESET);
+        positions.add("Captain");
+        positions.add("Navigation Officer");
+        positions.add("Landing Party / Exploration Officer");
+        positions.add("Shields Officer");
+        positions.add("Weapons Officer");
+        positions.add("Cargo Hold Officer");
         wasRedDot = false;
-        state = null;
         alreadyHadChance = false;
     }
 
@@ -128,9 +131,6 @@ public class DataGame{
 
     public void setSavedPlanet(Planet savedPlanet) { this.savedPlanet = savedPlanet; }
 
-    public IStates getState() { return state; }
-
-    public void setState(IStates state) { this.state = state; }
 
     public boolean isAlreadyHadChance() { return alreadyHadChance; }
 
@@ -172,6 +172,8 @@ public class DataGame{
     }
 
     //------------------------------
+
+
 
     public int whereTo() {
         double wormHole = Math.random();
@@ -857,5 +859,16 @@ public class DataGame{
             return "No Scores found";
         else
             return scores.toString();
+    }
+
+
+    public String getSSText() {
+        return "On a Space Station you can:\n- Upgrade your cargo hold (2 of each resource)\n- Hire a crew member (1 of each resource)\n" +
+                "- Upgrade your weapon system (2 of each resource)\n- Purchase a new Mining Drone (2 of each resource)";
+    }
+
+    public String getConvertText() {
+        return "On your ship workbench you can:\n- Convert one type of resource into another\n- Craft an energy shield (costs 1 black, green and blue)\n" +
+                "- Craft an ammo cell (costs 1 black and blue resource)\n- Craft a fuel cell (costs 1 black, red and green resources";
     }
 }

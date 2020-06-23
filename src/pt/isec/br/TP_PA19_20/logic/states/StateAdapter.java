@@ -1,19 +1,20 @@
 package pt.isec.br.TP_PA19_20.logic.states;
 
+import pt.isec.br.TP_PA19_20.integration.StateID;
 import pt.isec.br.TP_PA19_20.logic.data.DataGame;
 
 
 public abstract class StateAdapter implements IStates {
-    protected DataGame game;
+    protected DataGame data;
 
-    public StateAdapter(DataGame game) { this.game = game; }
+    public StateAdapter(DataGame data) { this.data = data; }
 
-    public DataGame getGame() { return game; }
+    public DataGame getGame() { return data; }
 
-    public void setGame(DataGame game) { this.game = game; }
+    public void setGame(DataGame data) { this.data = data; }
 
     @Override
-    public IStates start(DataGame game) { return this; }
+    public IStates start(DataGame data) { return this; }
 
     @Override
     public IStates selectShip(int value) { return this; }
@@ -50,13 +51,13 @@ public abstract class StateAdapter implements IStates {
 
     @Override
     public IStates checkLossConditions() {
-        if(game.getShip() != null) {
-            if(!game.getOfficers().get(0))
-                return new GameOver(game);
-            else if (game.getShip().getFuel() <= 0 && !game.isAlreadyHadChance())
-                return new LastChance(game);
-            else if (game.getShip().getFuel() <= 0)
-                return new GameOver(game);
+        if(data.getShip() != null) {
+            if(!data.getOfficers().get(0))
+                return new GameOver(data);
+            else if (data.getShip().getFuel() <= 0 && !data.isAlreadyHadChance())
+                return new LastChance(data);
+            else if (data.getShip().getFuel() <= 0)
+                return new GameOver(data);
             else
                 return this;
         }
@@ -71,6 +72,16 @@ public abstract class StateAdapter implements IStates {
 
     @Override
     public IStates end() { return this; }
+
+    @Override
+    public StateID getStateID(){
+        return StateID.GAME_OVER;
+    }
+
+    @Override
+    public IStates restart() {
+        return this;
+    }
 
     //@Override
     //public IStates extraConversion() { return this; }

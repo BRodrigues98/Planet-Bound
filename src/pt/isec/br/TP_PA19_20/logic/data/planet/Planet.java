@@ -2,10 +2,11 @@ package pt.isec.br.TP_PA19_20.logic.data.planet;
 
 import pt.isec.br.TP_PA19_20.logic.data.planet.alien.Alien;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class Planet{
+public abstract class Planet implements Serializable {
     protected boolean spaceStation;
     protected int numResources;
     protected int timesMined;
@@ -79,4 +80,6 @@ public abstract class Planet{
                 ", numResources=" + numResources +
                 '}';
     }
+
+    public abstract int asInt();
 }

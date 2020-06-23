@@ -1,7 +1,9 @@
 package pt.isec.br.TP_PA19_20.logic.data.ship;
 
 
-public class Drone {
+import java.io.Serializable;
+
+public class Drone implements Serializable {
     private int posX;
     private int posY;
     private int hp;
