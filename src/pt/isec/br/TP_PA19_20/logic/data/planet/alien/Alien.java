@@ -1,8 +1,9 @@
 package pt.isec.br.TP_PA19_20.logic.data.planet.alien;
 
+import java.io.Serializable;
 import java.util.List;
 
-public abstract class Alien {
+public abstract class Alien implements Serializable {
     protected int posX;
     protected int posY;
     protected List<Integer> attack;

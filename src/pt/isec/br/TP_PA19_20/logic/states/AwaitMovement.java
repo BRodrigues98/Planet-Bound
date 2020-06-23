@@ -1,38 +1,45 @@
 package pt.isec.br.TP_PA19_20.logic.states;
 
+import pt.isec.br.TP_PA19_20.integration.StateID;
 import pt.isec.br.TP_PA19_20.logic.data.DataGame;
 
 public class AwaitMovement extends StateAdapter{
 
-    public AwaitMovement(DataGame game) {
-        super(game);
-        game.setState(this);
+    public AwaitMovement(DataGame data) {
+        super(data);
+        //data.setState(this);
     }
 
     @Override
     public IStates move(boolean firstMove) {
         if(firstMove){
-            game.setFirstMove(false);
-            //game.setPreviousPosition(game.getPosition());
-            //game.setPosition("planet");
-            return new AwaitPlanetDecision(game);
+            data.setFirstMove(false);
+            //data.setPreviousPosition(data.getPosition());
+            //data.setPosition("planet");
+
+            return new AwaitPlanetDecision(data);
         }
         else{
-            int whereTo = game.whereTo();
+            int whereTo = data.whereTo();
             if(whereTo == 0)
-                return new GameOver(game);
+                return new GameOver(data);
             else if(whereTo == 1)
-                return new AwaitDiceRoll(game);
+                return new AwaitDiceRoll(data);
             else if(whereTo == 2)
-                return new AwaitPlanetDecision(game);
+                return new AwaitPlanetDecision(data);
             else if(whereTo == -1) {
-                if(!game.getOfficers().get(game.getOfficers().size() - 1))
-                    return new GameOver(game);
-                return new LastChance(game);
+                if(!data.getOfficers().get(data.getOfficers().size() - 1))
+                    return new GameOver(data);
+                return new LastChance(data);
             }
             else
                 return this;
         }
+    }
+
+    @Override
+    public StateID getStateID() {
+        return StateID.AWAIT_MOVEMENT;
     }
 
 }

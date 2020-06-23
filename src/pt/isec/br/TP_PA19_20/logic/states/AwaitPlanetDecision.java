@@ -1,51 +1,52 @@
 package pt.isec.br.TP_PA19_20.logic.states;
 
+import pt.isec.br.TP_PA19_20.integration.StateID;
 import pt.isec.br.TP_PA19_20.logic.data.DataGame;
 import pt.isec.br.TP_PA19_20.logic.data.planet.*;
 
 public class AwaitPlanetDecision extends StateAdapter{
-    public AwaitPlanetDecision(DataGame game) {
-        super(game);
-        game.setState(this);
-        if(game.getSavedPlanet() != null){
-            game.setPlanet(game.getSavedPlanet());
-            game.setSavedPlanet(null);
+    public AwaitPlanetDecision(DataGame data) {
+        super(data);
+        //data.setState(this);
+        if(data.getSavedPlanet() != null){
+            data.setPlanet(data.getSavedPlanet());
+            data.setSavedPlanet(null);
         }
         else {
             double rand = Math.random();
             if (rand <= 0.25)
-                game.setPlanet(new GreenPlanet());
+                data.setPlanet(new GreenPlanet());
             else if (rand > 0.25 && rand <= 0.5)
-                game.setPlanet(new BlackPlanet());
+                data.setPlanet(new BlackPlanet());
             else if (rand > 0.5 && rand >= 0.75)
-                game.setPlanet(new RedPlanet());
+                data.setPlanet(new RedPlanet());
             else
-                game.setPlanet(new BluePlanet());
+                data.setPlanet(new BluePlanet());
 
-            game.addLogs(game.getPlanet().toString());
+            data.addLogs(data.getPlanet().toString());
         }
 
     }
 
     @Override
     public IStates land() {
-        if(!game.getOfficers().get(2)) { //Se não tiver exploration officer
-            game.addLogs("You don't have an " + game.getPositions().get(2) +". You can't land.");
+        if(!data.getOfficers().get(2)) { //Se não tiver exploration officer
+            data.addLogs("You don't have an " + data.getPositions().get(2) +". You can't land.");
             return this;
         }
-        else if(!game.getShip().isDrone()){
-            game.addLogs("You don't have a Drone. You can't explore.");
+        else if(!data.getShip().isDrone()){
+            data.addLogs("You don't have a Drone. You can't explore.");
             return this;
         }
         else {
-            game.addLogs("Sending exploration drone to planet.");
-            int mined = game.mine();
+            data.addLogs("Sending exploration drone to planet.");
+            int mined = data.mine();
             if(mined == 0 || mined == 1) //Planet already fully mined || Alien destroyed drone
                 return this;
-            else if(game.getPlanet().getTimesMined() < game.getPlanet().getNumResources())
+            else if(data.getPlanet().getTimesMined() < data.getPlanet().getNumResources())
                 return this;
             else
-                return new AwaitMiningConfirmation(game);
+                return new AwaitMiningConfirmation(data);
 
 
         }
@@ -54,43 +55,49 @@ public class AwaitPlanetDecision extends StateAdapter{
 
     @Override
     public IStates nextTurn() {
-        if(game.getShip().getNumArtifacts() < 5) {
-            game.addLogs("Exiting planet");
-            return new AwaitMiningConfirmation(game);
+        if(data.getShip().getNumArtifacts() < 5) {
+            data.addLogs("Exiting planet");
+            //return new AwaitMiningConfirmation(data);
+            return new AwaitMovement(data);
         }
         else {
-            game.addLogs("You've won the game! Congratulations.");
-            return new GameOver(game);
+            data.addLogs("You've won the game! Congratulations.");
+            return new GameOver(data);
         }
     }
 
     @Override
     public IStates landOnSS() {
-        if(game.getPlanet().isSpaceStation()) {
-            game.addLogs("Flying to Space Station");
-            return new AwaitSSDecision(game);
+        if(data.getPlanet().isSpaceStation()) {
+            data.addLogs("Flying to Space Station");
+            return new AwaitSSDecision(data);
         }
         else {
-            game.addLogs("This planet does not have a Space Station in its orbit.");
+            data.addLogs("This planet does not have a Space Station in its orbit.");
             return this;
         }
     }
 
     @Override
     public IStates convert(int type) {
-        int converted = game.convert(type);
+        int converted = data.convert(type);
         if (converted == 0)
             return this;
         else
-            return new AwaitResourcesConversion(game);
+            return new AwaitResourcesConversion(data);
     }
 
     @Override
     public IStates convert(int resNew, int resOld) {
-        int converted = game.convert(resNew, resOld);
+        int converted = data.convert(resNew, resOld);
         if (converted == 0)
             return this;
         else
-            return new AwaitResourcesConversion(game);
+            return new AwaitResourcesConversion(data);
+    }
+
+    @Override
+    public StateID getStateID() {
+        return StateID.AWAIT_PLANET_DECISON;
     }
 }
