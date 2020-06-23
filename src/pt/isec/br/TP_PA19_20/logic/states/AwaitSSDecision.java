@@ -1,12 +1,13 @@
 package pt.isec.br.TP_PA19_20.logic.states;
 
+import pt.isec.br.TP_PA19_20.integration.StateID;
 import pt.isec.br.TP_PA19_20.logic.data.DataGame;
 
 public class AwaitSSDecision extends StateAdapter{
     boolean cargoUpgradedThisTurn;
-    public AwaitSSDecision(DataGame game) {
-        super(game);
-        game.setState(this);
+    public AwaitSSDecision(DataGame data) {
+        super(data);
+        //data.setState(this);
         cargoUpgradedThisTurn = false;
     }
 
@@ -16,14 +17,14 @@ public class AwaitSSDecision extends StateAdapter{
 
     @Override
     public IStates makesDecision(int choice) {
-         //game.debug();
-         //game.getShip().debug();
+         //data.debug();
+         //data.getShip().debug();
         if(choice == 1 && cargoUpgradedThisTurn){
-            game.addLogs("You can't upgrade your cargo again.");
+            data.addLogs("You can't upgrade your cargo again.");
             return this;
         }
 
-        int decided = game.makesDecision(choice);
+        int decided = data.makesDecision(choice);
 
         if (choice == 1 && decided == 1) //upgrade cargo hold
             cargoUpgradedThisTurn = true;
@@ -33,11 +34,11 @@ public class AwaitSSDecision extends StateAdapter{
 
     @Override
     public IStates backToPlanet() {
-        if(game.getState() instanceof AwaitMiningConfirmation) {
-            game.setState(null);
-            return new AwaitDiceRoll(game);
-        }
-        else
-            return new AwaitPlanetDecision(game);
+        return new AwaitDiceRoll(data);
+    }
+
+    @Override
+    public StateID getStateID() {
+        return StateID.AWAIT_SS_DECISION;
     }
 }

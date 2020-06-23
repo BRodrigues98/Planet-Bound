@@ -1,11 +1,12 @@
 package pt.isec.br.TP_PA19_20.logic.data.ship;
 
-import pt.isec.br.TP_PA19_20.ui.Colors;
+import pt.isec.br.TP_PA19_20.ui.text.Colors;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Ship{
+public abstract class Ship implements Serializable {
     protected int weaponSystem;
     protected int shieldSystem;
     protected int maxWeapon;
@@ -41,10 +42,10 @@ public abstract class Ship{
         cargoHold.add(0);   //Green resource
 
         cargoType = new ArrayList<>();
-        cargoType.add(Colors.ANSI_BLACK + "black" + Colors.ANSI_RESET);   //Black resource
-        cargoType.add(Colors.ANSI_RED + "red" + Colors.ANSI_RESET);   //Red resource
-        cargoType.add(Colors.ANSI_BLUE + "blue" + Colors.ANSI_RESET);   //Blue resource
-        cargoType.add(Colors.ANSI_GREEN + "green" + Colors.ANSI_RESET);   //Green resource
+        cargoType.add("black");   //Black resource
+        cargoType.add("red");   //Red resource
+        cargoType.add("blue");   //Blue resource
+        cargoType.add("green");   //Green resource
         
         numArtifacts = 0;
         drone = new Drone();

@@ -1,9 +1,12 @@
 package pt.isec.br.TP_PA19_20.logic.states;
 
+import pt.isec.br.TP_PA19_20.integration.StateID;
 import pt.isec.br.TP_PA19_20.logic.data.DataGame;
 
-public interface IStates {
-    IStates start(DataGame game);
+import java.io.Serializable;
+
+public interface IStates extends Serializable {
+    IStates start(DataGame data);
     IStates selectShip(int value);
     IStates move(boolean firstMove);
     IStates nextTurn();
@@ -22,5 +25,9 @@ public interface IStates {
     IStates lastChance();
 
     IStates end();
+
+    StateID getStateID();
+
+    IStates restart();
     //IStates extraConversion();
 }
