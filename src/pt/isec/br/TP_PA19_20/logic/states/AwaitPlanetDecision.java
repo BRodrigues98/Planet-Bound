@@ -30,7 +30,7 @@ public class AwaitPlanetDecision extends StateAdapter{
     @Override
     public IStates land() {
         if(!game.getOfficers().get(2)) { //Se não tiver exploration officer
-            game.addLogs("You don't have an Exploration Officer. You can't land.");
+            game.addLogs("You don't have an " + game.getPositions().get(2) +". You can't land.");
             return this;
         }
         else if(!game.getShip().isDrone()){
@@ -40,7 +40,7 @@ public class AwaitPlanetDecision extends StateAdapter{
         else {
             game.addLogs("Sending exploration drone to planet.");
             int mined = game.mine();
-            if(mined == 0 || mined == 1) //Don't have a drone || Planet already fully mined || Alien destroyed drone
+            if(mined == 0 || mined == 1) //Planet already fully mined || Alien destroyed drone
                 return this;
             else if(game.getPlanet().getTimesMined() < game.getPlanet().getNumResources())
                 return this;

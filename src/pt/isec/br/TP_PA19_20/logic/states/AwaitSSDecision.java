@@ -1,13 +1,12 @@
 package pt.isec.br.TP_PA19_20.logic.states;
 
 import pt.isec.br.TP_PA19_20.logic.data.DataGame;
-import pt.isec.br.TP_PA19_20.logic.data.ship.Mining;
 
 public class AwaitSSDecision extends StateAdapter{
     boolean cargoUpgradedThisTurn;
     public AwaitSSDecision(DataGame game) {
         super(game);
-
+        game.setState(this);
         cargoUpgradedThisTurn = false;
     }
 
@@ -29,11 +28,7 @@ public class AwaitSSDecision extends StateAdapter{
         if (choice == 1 && decided == 1) //upgrade cargo hold
             cargoUpgradedThisTurn = true;
 
-        if(decided == 1){
-            return this;
-        }
-        else
-            return this;
+        return this;
     }
 
     @Override

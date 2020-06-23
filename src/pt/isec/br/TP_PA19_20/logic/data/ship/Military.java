@@ -1,7 +1,8 @@
 package pt.isec.br.TP_PA19_20.logic.data.ship;
 
 
-public class Military extends Ship {
+
+public class Military extends Ship{
 
     public Military() {
         super();
@@ -13,13 +14,6 @@ public class Military extends Ship {
         maxFuel = 35;
     }
 
-    @Override
-    public void debug() {
-        for (int i = 0; i < cargoHold.size(); i++) {
-            cargoHold.set(i, 5);
-        }
-
-    }
 
     @Override
     public String toString() {

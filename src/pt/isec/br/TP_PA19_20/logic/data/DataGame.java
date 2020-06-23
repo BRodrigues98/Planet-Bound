@@ -7,11 +7,17 @@ import pt.isec.br.TP_PA19_20.logic.data.ship.Drone;
 import pt.isec.br.TP_PA19_20.logic.data.ship.Mining;
 import pt.isec.br.TP_PA19_20.logic.data.ship.Ship;
 import pt.isec.br.TP_PA19_20.logic.states.IStates;
+import pt.isec.br.TP_PA19_20.ui.Colors;
+import utils.UtilFile;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataGame {
+public class DataGame{
     private List<String> logs;
     private Ship ship;
     private List<Boolean> officers;
@@ -32,6 +38,7 @@ public class DataGame {
     private Planet savedPlanet;
     private List<String> events;
     private boolean wasRedDot;
+    private boolean alreadyHadChance;
     IStates state;
 
 
@@ -41,7 +48,7 @@ public class DataGame {
         init();
     }
 
-    //-------------------------------------
+
 
     public void init(){
         ship = null;
@@ -66,20 +73,22 @@ public class DataGame {
         events.add("Crew Rescue");
 
         positions = new ArrayList<>();
-        positions.add("Captain");
-        positions.add("Navigation Officer");
-        positions.add("Landing Party / Exploration Officer");
-        positions.add("Shields Officer");
-        positions.add("Weapons Officer");
-        positions.add("Cargo Hold Officer");
+        positions.add(Colors.ANSI_YELLOW + "Captain" + Colors.ANSI_RESET);
+        positions.add(Colors.ANSI_BLUE + "Navigation Officer" + Colors.ANSI_RESET);
+        positions.add(Colors.ANSI_RED + "Landing Party / Exploration Officer" + Colors.ANSI_RESET);
+        positions.add(Colors.ANSI_PURPLE + "Shields Officer" + Colors.ANSI_RESET);
+        positions.add(Colors.ANSI_CYAN + "Weapons Officer" + Colors.ANSI_RESET);
+        positions.add(Colors.ANSI_GREEN + "Cargo Hold Officer" + Colors.ANSI_RESET);
         wasRedDot = false;
         state = null;
+        alreadyHadChance = false;
     }
+
+    //-------------------------------------
+
     //------------ GETTERS/SETTERS ------------
 
-    public Ship getShip() {
-        return ship;
-    }
+    public Ship getShip() { return ship; }
 
     public void setShip(Ship ship) { this.ship = ship; }
 
@@ -123,6 +132,10 @@ public class DataGame {
 
     public void setState(IStates state) { this.state = state; }
 
+    public boolean isAlreadyHadChance() { return alreadyHadChance; }
+
+    public void setAlreadyHadChance(boolean alreadyHadChance) { this.alreadyHadChance = alreadyHadChance; }
+
     //-----------------------------------------
 
     //------------ LOGS ------------
@@ -163,7 +176,7 @@ public class DataGame {
     public int whereTo() {
         double wormHole = Math.random();
         if(wormHole <= 0.125){
-            addLogs("You're going through a wormhole!");
+            addLogs("You're going through a " + Colors.ANSI_YELLOW + "wormhole" + Colors.ANSI_RESET + "!");
             int shieldToLose, fuelToLose;
             if(!officers.get(3)){
                 shieldToLose = 4;
@@ -178,14 +191,12 @@ public class DataGame {
                 ship.setFuel(ship.getFuel() - fuelToLose);
                 if(ship.getFuel() <= 0) {
                     addLogs("You've ran out of fuel.");
-                    return 0;
+                    return -1;
                 }
                 else {
-                    //game.setPreviousPosition(game.getPosition());
-                    //game.setPosition("planet");
                     addLogs("You've lost " + shieldToLose + " shield cells. You now have " + ship.getShieldSystem() + " cells.");
                     addLogs("You've lost " + fuelToLose + " fuel. You now have " + ship.getFuel() + " fuel left.");
-                    addLogs("Exiting wormhole.");
+                    addLogs("Exiting " + Colors.ANSI_YELLOW + "wormhole" + Colors.ANSI_RESET + ".");
                     if(!wasRedDot) {
                         addLogs("New event about to happen. Hold tight.");
                         wasRedDot = true;
@@ -208,20 +219,20 @@ public class DataGame {
                         break;
                     }
                 }
-                addLogs("Because you didn't have enough shield cells, one of your officers is going to die and you lose an extra 2 fuel.");
+                addLogs("Because you didn't have enough shield cells, " + Colors.ANSI_RED + "one of your officers is going to die"
+                        + Colors.ANSI_RESET + " and you lose an extra 2 fuel.");
                 addLogs(officerKilled(index));
                 officers.set(index, false);
                 ship.setFuel(ship.getFuel() - 2);
                 if(ship.getFuel() <= 0){
                     addLogs("You've ran out of fuel.");
-                    return 0;
+                    return -1;
                 }
                 else if(index == 0)  //Morreu o ultimo crew member
                     return 0;
                 else { //Passamos o wormhole e chegamos a novo planeta
-                    //game.setPreviousPosition(game.getPosition());
-                    //game.setPosition("planet");
-                    addLogs("Exiting wormhole.");
+
+                    addLogs("Exiting " + Colors.ANSI_YELLOW + "wormhole" + Colors.ANSI_RESET + ".");
                     if(!wasRedDot) {
                         addLogs("New event about to happen. Hold tight.");
                         wasRedDot = true;
@@ -237,8 +248,6 @@ public class DataGame {
             }
         }
         else { //Não estamos num wormhole
-            //game.setPreviousPosition(game.getPosition());
-            //game.setPosition("red dot");
             ship.setFuel(ship.getFuel() - 1);
             if(!wasRedDot) {
                 addLogs("New event about to happen. Hold tight.");
@@ -254,11 +263,6 @@ public class DataGame {
     }
 
     public int mine(){
-        if(!ship.isDrone()){
-            addLogs("You don't have a drone to mine.");
-            return 0;
-        }
-
         ship.getDrone().setPosX((int) (Math.random() * 6) + 1);
         ship.getDrone().setPosY((int) (Math.random() * 6) + 1);
 
@@ -266,7 +270,6 @@ public class DataGame {
         droneStartingLocation[0] = ship.getDrone().getPosX();
         droneStartingLocation[1] = ship.getDrone().getPosY();
 
-        //planet.setAlien(new Alien(drone.getPosX(), drone.getPosY()));
 
         //Verifica se já foi minado vezes suficientes
         if(planet.getTimesMined() == planet.getNumResources()) {
@@ -300,7 +303,7 @@ public class DataGame {
             while(resPosX == planet.getAlien().getPosX() || resPosY == planet.getAlien().getPosY());
 
 
-            while(!pickedUp){   //ship.getDrone().getPosX() != resPosX && ship.getDrone().getPosY() != resPosY
+            while(!pickedUp){
 
                 //Movimentação do drone
                 if(ship.getDrone().getPosX() > resPosX)
@@ -417,19 +420,19 @@ public class DataGame {
     private void randomAlien() {
         double rand = Math.random();
         if(rand <= 0.25){
-            addLogs("Black Alien spawned!");
+            addLogs(Colors.ANSI_BLACK + "Black Alien" + Colors.ANSI_RESET + " spawned!");
             getPlanet().setAlien(new BlackAlien(ship.getDrone().getPosX(), ship.getDrone().getPosY()));
         }
         else if(rand > 0.25 && rand <= 0.5){
-            addLogs("Green Alien spawned!");
+            addLogs(Colors.ANSI_GREEN + "Green Alien" + Colors.ANSI_RESET + " spawned!");
             getPlanet().setAlien(new GreenAlien(ship.getDrone().getPosX(), ship.getDrone().getPosY()));
         }
         else if(rand > 0.5 && rand <= 0.75){
-            addLogs("Blue Alien spawned!");
+            addLogs(Colors.ANSI_BLACK + "Blue Alien" + Colors.ANSI_RESET + " spawned!");
             getPlanet().setAlien(new BlueAlien(ship.getDrone().getPosX(), ship.getDrone().getPosY()));
         }
         else {
-            addLogs("Red Alien spawned!");
+            addLogs(Colors.ANSI_RED + "Red Alien" + Colors.ANSI_RESET + " spawned!");
             getPlanet().setAlien(new RedAlien(ship.getDrone().getPosX(), ship.getDrone().getPosY()));
         }
     }
@@ -554,8 +557,10 @@ public class DataGame {
             }
         }
 
-        if(officers.isEmpty() || ship.getFuel() <= 0)
+        if(officers.isEmpty())
             return 0;
+        else if(ship.getFuel() <= 0)
+            return -1;
         else if(!officers.isEmpty() && ship.getFuel() > 0)
             return 1;
         else
@@ -810,10 +815,47 @@ public class DataGame {
         for (int i = 0; i < ship.getCargoHold().size(); i++) {
             addLogs(ship.getCargoType().get(i) + " resources: " + ship.getCargoHold().get(i));
         }
-        addLogs("Artifacts: " + ship.getNumArtifacts());
+        addLogs(Colors.ANSI_PURPLE + "Artifacts" + Colors.ANSI_RESET + ": " + ship.getNumArtifacts());
     }
 
-    public void debug() {
+    public int getFinalScore() {
+        int finalScore = ship.getWeaponSystem() + ship.getShieldSystem() + (ship.getFuel() * 2) + (ship.getNumArtifacts() * 10);
+        for (int i = 0; i < ship.getCargoHold().size(); i++) {
+            finalScore += (ship.getCargoHold().get(i) * 2);
+        }
 
+        return finalScore;
+    }
+
+    public void saveScore(int finalScore, String username) {
+        try{
+            PrintWriter pw = UtilFile.openFileTextWrite("highscores.txt");
+            pw.println(username + " " + finalScore);
+
+
+            pw.close();
+        } catch (IOException e) {
+            addLogs("Error while saving score.");
+        }
+    }
+
+    public String readScores(){
+        StringBuilder scores = new StringBuilder();
+        String aux = null;
+        int i = 1;
+        try{
+            BufferedReader br = UtilFile.openFileTextRead("highscores.txt");
+            while((aux = br.readLine()) != null){
+                scores.append(i).append(") ").append(aux).append("\n");
+                i++;
+            }
+
+        } catch (IOException e) {
+            addLogs("Error loading scores.");
+        }
+        if(scores.toString().equals(""))
+            return "No Scores found";
+        else
+            return scores.toString();
     }
 }

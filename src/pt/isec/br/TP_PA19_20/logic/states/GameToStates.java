@@ -1,7 +1,9 @@
 package pt.isec.br.TP_PA19_20.logic.states;
 
 import pt.isec.br.TP_PA19_20.logic.data.DataGame;
+import utils.UtilFile;
 
+import java.io.PrintWriter;
 import java.util.List;
 
 public class GameToStates {
@@ -95,8 +97,15 @@ public class GameToStates {
 
     public void backToPlanet() { this.state = state.backToPlanet(); }
 
+    public void setLastChance() { game.setAlreadyHadChance(true);}
 
-    //public void extraConversion() { this.state = state.extraConversion();}
+    public int getFinalScore() { return game.getFinalScore();}
 
-    //public String getPosition() { return game.getPosition(); }
+    public void saveScore(int finalScore, String username) { game.saveScore(finalScore, username);}
+
+    public boolean getLastChance() { return game.isAlreadyHadChance(); }
+
+    public void end() { this.state = state.end(); }
+
+    public String readScores() { return game.readScores(); }
 }

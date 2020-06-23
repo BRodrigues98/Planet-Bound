@@ -18,5 +18,9 @@ public interface IStates {
     IStates checkLossConditions();
 
     IStates backToPlanet();
+
+    IStates lastChance();
+
+    IStates end();
     //IStates extraConversion();
 }

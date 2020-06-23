@@ -7,7 +7,6 @@ public abstract class Alien {
     protected int posY;
     protected List<Integer> attack;
     protected List<Integer> death;
-    //private String type;
     /*
     0 - black
         - Attack on 1
@@ -23,6 +22,7 @@ public abstract class Alien {
         - Death  on 1-2
      */
 
+    //------------ CONSTRUCTOR ------------
     public Alien(int dronePosX, int dronePosY) {
         do {
             this.posX = (int) (Math.random() * 6) + 1;
@@ -31,7 +31,7 @@ public abstract class Alien {
         while(dronePosX == this.posX || dronePosY == this.posY);
 
     }
-
+    //-------------------------------------
 
     //------------ GETTERS/SETTERS ------------
     public int getPosX() { return posX; }

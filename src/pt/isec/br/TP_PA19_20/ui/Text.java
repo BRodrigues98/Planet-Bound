@@ -6,18 +6,7 @@ import pt.isec.br.TP_PA19_20.logic.states.*;
 import java.util.Scanner;
 
 public class Text {
-    //ANSI escape codes
-    //System.out.println(ANSI_RED + "First you must choose your spacehip!" + ANSI_RESET);
-    //https://stackoverflow.com/questions/5762491/how-to-print-color-in-console-using-system-out-println
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_BLACK = "\u001B[30m";
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String ANSI_YELLOW = "\u001B[33m";
-    public static final String ANSI_BLUE = "\u001B[34m";
-    public static final String ANSI_PURPLE = "\u001B[35m";
-    public static final String ANSI_CYAN = "\u001B[36m";
-    public static final String ANSI_WHITE = "\u001B[37m";
+
 
     private GameToStates game;
     private Scanner sc;
@@ -30,8 +19,13 @@ public class Text {
     }
 
     public void run(){
+        System.out.println("Welcome to " + Colors.ANSI_BLUE + "Planet Bound" + Colors.ANSI_RESET + ". Press Enter when you're ready to start the game.");
+        sc.nextLine();
+
         while(!exit){
              checkLogs();
+
+            game.checkLossConditions();
 
             if(game.getState() instanceof AwaitSpaceshipSelection)
                 UIAwaitSpaceshipSelection();
@@ -47,30 +41,29 @@ public class Text {
                 UIAwaitResourcesConversion();
             else if (game.getState() instanceof AwaitDiceRoll)
                 UIAwaitDiceRoll();
+            else if(game.getState() instanceof LastChance)
+                UILastChance();
             else if (game.getState() instanceof GameOver)
                 UIGameOver();
 
-            game.checkLossConditions();
+
 
         }
 
 
     }
 
-    private void UIGameOver() {
-        checkLogs();
-        if(game.getNumArtifacts() == 5)
-            System.out.println("Congratulations. You have won the game.");
-        else
-            System.out.println("Sorry, you have lost the game.");
-
-
-
+    //--------- UI ESPECIFICAS DE ESTADO ---------
+    private void UIAwaitSpaceshipSelection() {
         int value;
         do {
-            System.out.println("What do you want to do?");
-            System.out.println("1 - Play again.");
-            System.out.println("2 - Exit");
+
+            System.out.println("First you must choose your spacehip!");
+            System.out.println("1 - Mining Ship");
+            System.out.println("2 - Military Ship");
+            System.out.println("3 - Show Ships stats");
+            System.out.println("4 - Show Past Saved Scores");
+            System.out.println("5 - Give up and exit");
             System.out.print(">.");
 
             while (!sc.hasNextInt())
@@ -78,12 +71,111 @@ public class Text {
             value = sc.nextInt();
             sc.nextLine();
 
-            if(value == 1)
-                game.start();
-            else if(value == 2)
+            if (value == 1 || value == 2) {
+                game.selectShip(value);
+            } else if (value == 3) {
+                showShipsStats();
+                System.out.println("Choose your spaceship:\n1 - Mining Ship\n2 - Military Ship\n3 - Show Past Saved Scores\n4 - Give up and exit");
+
+                System.out.print(">.");
+
+                while (!sc.hasNextInt())
+                    sc.next();
+                value = sc.nextInt();
+                sc.nextLine();
+                if (value == 1 || value == 2)
+                    game.selectShip(value);
+                else if(value == 3)
+                    System.out.println(game.readScores());
+                else if (value == 4)
+                    exit = true;
+            }
+            else if(value == 4)
+                System.out.println(game.readScores());
+            else if (value == 5)
                 exit = true;
         }
-        while(value > 2);
+        while(value > 5);
+    }
+
+    private void UIAwaitMovement() {
+        if(game.isFirstMove()){
+            System.out.println("Let's find your first planet!");
+        }
+        game.move(game.isFirstMove());
+    }
+
+    private void UIAwaitPlanetDecision() {
+        checkLogs();
+        if(game.getTimesMined() > 0) {
+            System.out.println("Press Enter to continue.");
+            sc.nextLine();
+
+            System.out.println("\nYou've mined this planet " + game.getTimesMined() + " times out of " + game.getNumResourcesOnPlanet() + " possible.");
+        }
+
+        int value, flag;
+        do {
+            if (game.isSpaceStation()) {
+                System.out.println("This planet also has a Space Station in its orbit!");
+                System.out.println("What do you want to do?");
+                System.out.println("1 - Land and mine the planet");
+                System.out.println("2 - Land on Space Station");
+                System.out.println("3 - Convert Resources");
+                System.out.println("4 - Ignore this planet and keep going");
+                System.out.println("5 - See your Ship stats");
+                flag = 5;
+            } else {
+                System.out.println("What do you want to do?");
+                System.out.println("1 - Land and mine the planet");
+                System.out.println("2 - Convert Resources");
+                System.out.println("3 - Keep going");
+                System.out.println("4 - See your Ship stats");
+                flag = 4;
+            }
+
+            System.out.print(">.");
+
+            while (!sc.hasNextInt())
+                sc.next();
+            value = sc.nextInt();
+            sc.nextLine(); //O nextInt não limpa o enter em buffer
+
+            if (value == 1)
+                game.land();
+            else if(flag == 5){
+                if(value == 2) {
+                    game.savePlanet();
+                    game.landOnSS();
+                }
+                else if(value == 3) {
+                    game.savePlanet();
+                    craftOptions();
+                }
+                else if(value == 4)
+                    game.nextTurn();
+                else if(value == 5){
+                    game.currentShipStats();
+                    checkLogs();
+                    return;
+                }
+            }
+            else{
+                if(value == 2) {
+                    game.savePlanet();
+                    craftOptions();
+                }
+                else if(value == 3)
+                    game.nextTurn();
+                else if(value == 4){
+                    game.currentShipStats();
+                    checkLogs();
+                    return;
+                }
+            }
+
+        }
+        while (value > flag);
     }
 
     private void UIAwaitSSDecision() {
@@ -107,40 +199,105 @@ public class Text {
         }
         while(value > 6);
 
-            if(value == 6){
-                game.currentShipStats();
-                checkLogs();
-                return;
+        if(value == 6){
+            game.currentShipStats();
+            checkLogs();
+            return;
+        }
+        else if(value == 5){
+            game.backToPlanet();
+        }
+        else if(value > 0) {
+            game.makesDecision(value);
+        }
+
+        if(value != 5) {
+            do {
+                checkLogs(); // Se a conversão do recurso não funcionar, ficam coisas pendentes
+                System.out.println("Do you want to convert more?");
+                System.out.println("1 - Yes");
+                System.out.println("2 - No");
+                System.out.print(">.");
+
+                while (!sc.hasNextInt())
+                    sc.next();
+                flag = sc.nextInt();
+                sc.nextLine();
             }
-            else if(value == 5){
+            while (flag > 2);
+
+            if (flag == 2) {
                 game.backToPlanet();
             }
-            else if(value > 0) {
-                game.makesDecision(value);
+            else
+                return;
+        }
+
+    }
+
+    private void UIAwaitMiningConfirmation() {
+        checkLogs();
+
+        if (game.getDroneResource() != null && game.getDroneResource().equals("artifact")) {
+            if (game.getNumArtifacts() == 4)
+                System.out.println("Congratulations. You only need 1 more artifact to win the game.");
+            else if (game.getNumArtifacts() < 5 && game.getNumArtifacts() > 0)
+                System.out.println("Congratulations. You only need " + (5 - game.getNumArtifacts()) + " more artifacts to win the game.");
+        }
+
+
+        int value, flag;
+        do {
+            System.out.println("What do you want to do now?");
+            System.out.println("1 - Proceed to next planet");
+            //System.out.println("2 - Convert your ship resources");
+            if(game.isSpaceStation()){
+                System.out.println("2 - Land on Space Station.");
+                System.out.println("3 - Convert Resources");
+                System.out.println("4 - See your Ship stats");
+                flag = 4;
+            }
+            else {
+                System.out.println("2 - Convert Resources");
+                System.out.println("3 - See your Ship stats");
+
+                flag = 3;
             }
 
-            if(value != 5) {
-                do {
-                    checkLogs(); // Se a conversão do recurso não funcionar, ficam coisas pendentes
-                    System.out.println("Do you want to convert more?");
-                    System.out.println("1 - Yes");
-                    System.out.println("2 - No");
-                    System.out.print(">.");
 
-                    while (!sc.hasNextInt())
-                        sc.next();
-                    flag = sc.nextInt();
-                    sc.nextLine();
-                }
-                while (flag > 2);
+            System.out.print(">.");
 
-                if (flag == 2) {
-                    game.backToPlanet();
-                }
-                else
+            while (!sc.hasNextInt())
+                sc.next();
+            value = sc.nextInt();
+            sc.nextLine(); //O nextInt não limpa o enter em buffer
+            if(flag == 3) {
+                if (value == 1)
+                    game.nextTurn();
+                else if(value == 2)
+                    craftOptions();
+                else if (value == 3) {
+                    game.currentShipStats();
+                    checkLogs();
                     return;
+                }
             }
-
+            else{
+                if (value == 1)
+                    game.nextTurn();
+                else if (value == 2) {
+                    game.landOnSS();
+                }
+                else if(value == 3)
+                    craftOptions();
+                else {
+                    game.currentShipStats();
+                    checkLogs();
+                    return;
+                }
+            }
+        }
+        while (value > flag || value <= 0);
     }
 
     private void UIAwaitResourcesConversion() {
@@ -227,189 +384,86 @@ public class Text {
 
     }
 
-    private void UIAwaitMiningConfirmation() {
+    private void UIGameOver() {
         checkLogs();
+        if(game.getNumArtifacts() == 5)
+            System.out.println("Congratulations. You have won the game.");
+        else
+            System.out.println("Sorry, you have lost the game.");
 
-        if (game.getDroneResource() != null && game.getDroneResource().equals("artifact")) {
-            if (game.getNumArtifacts() == 4)
-                System.out.println("Congratulations. You only need 1 more artifact to win the game.");
-            else if (game.getNumArtifacts() < 5 && game.getNumArtifacts() > 0)
-                System.out.println("Congratulations. You only need " + (5 - game.getNumArtifacts()) + " more artifacts to win the game.");
-        }
-
-
-        int value, flag;
-        do {
-            System.out.println("What do you want to do now?");
-            System.out.println("1 - Proceed to next planet");
-            //System.out.println("2 - Convert your ship resources");
-            if(game.isSpaceStation()){
-                System.out.println("2 - Land on Space Station.");
-                System.out.println("3 - Convert Resources");
-                System.out.println("4 - See your Ship stats");
-                flag = 4;
-            }
-            else {
-                System.out.println("2 - Convert Resources");
-                System.out.println("3 - See your Ship stats");
-
-                flag = 3;
-            }
-
-
-            System.out.print(">.");
-
-            while (!sc.hasNextInt())
-                sc.next();
-            value = sc.nextInt();
-            sc.nextLine(); //O nextInt não limpa o enter em buffer
-            if(flag == 3) {
-                if (value == 1)
-                    game.nextTurn();
-                else if(value == 2)
-                    craftOptions();
-                else if (value == 3) {
-                    game.currentShipStats();
-                    checkLogs();
-                    return;
-                }
-            }
-            else{
-                if (value == 1)
-                    game.nextTurn();
-                else if (value == 2) {
-                    game.landOnSS();
-                }
-                else if(value == 3)
-                    craftOptions();
-                else {
-                    game.currentShipStats();
-                    checkLogs();
-                    return;
-                }
-            }
-        }
-        while (value > flag || value <= 0);
-    }
-
-    private void UIAwaitPlanetDecision() {
-        checkLogs();
-        if(game.getTimesMined() > 0) {
-            System.out.println("Press Enter to continue.");
-            sc.nextLine();
-
-            System.out.println("\nYou've mined this planet " + game.getTimesMined() + " times out of " + game.getNumResourcesOnPlanet() + " possible.");
-        }
-
-        int value, flag;
-        do {
-            if (game.isSpaceStation()) {
-                System.out.println("This planet also has a Space Station in its orbit!");
-                System.out.println("What do you want to do?");
-                System.out.println("1 - Land and mine the planet");
-                System.out.println("2 - Land on Space Station");
-                System.out.println("3 - Convert Resources");
-                System.out.println("4 - Ignore this planet and keep going");
-                System.out.println("5 - See your Ship stats");
-                flag = 5;
-            } else {
-                System.out.println("What do you want to do?");
-                System.out.println("1 - Land and mine the planet");
-                System.out.println("2 - Convert Resources");
-                System.out.println("3 - Keep going");
-                System.out.println("4 - See your Ship stats");
-                flag = 4;
-            }
-
-            System.out.print(">.");
-
-            while (!sc.hasNextInt())
-                sc.next();
-            value = sc.nextInt();
-            sc.nextLine(); //O nextInt não limpa o enter em buffer
-
-            if (value == 1)
-                game.land();
-            else if(flag == 5){
-                if(value == 2) {
-                    game.savePlanet();
-                    game.landOnSS();
-                }
-                else if(value == 3) {
-                    game.savePlanet();
-                    craftOptions();
-                }
-                else if(value == 4)
-                    game.nextTurn();
-                else if(value == 5){
-                    game.currentShipStats();
-                    checkLogs();
-                    return;
-                }
-            }
-            else{
-                if(value == 2) {
-                    game.savePlanet();
-                    craftOptions();
-                }
-                else if(value == 3)
-                    game.nextTurn();
-                else if(value == 4){
-                    game.currentShipStats();
-                    checkLogs();
-                    return;
-                }
-            }
-
-        }
-        while (value > flag);
-    }
-
-    private void UIAwaitMovement() {
-        if(game.isFirstMove()){
-            System.out.println("Let's find your first planet!");
-        }
-        game.move(game.isFirstMove());
-    }
-
-    private void UIAwaitSpaceshipSelection() {
         int value;
-        do {
-            System.out.println("First you must choose your spacehip!");
-            System.out.println("1 - Mining Ship");
-            System.out.println("2 - Military Ship");
-            System.out.println("3 - Show Ships stats");
-            System.out.println("4 - Give up and exit");
-           // System.out.println("You should press Enter after every message.");
-            System.out.print(">.");
+        System.out.println("Final Score: " + game.getFinalScore());
+
+        do{
+            System.out.println("Do you want to save this score?");
+            System.out.println("1 - Yes");
+            System.out.println("2 - No");
+            System.out.println("3 - Show other scores");
 
             while (!sc.hasNextInt())
                 sc.next();
             value = sc.nextInt();
             sc.nextLine();
 
-            if (value == 1 || value == 2) {
-                game.selectShip(value);
-            } else if (value == 3) {
-                showShipsStats();
-                System.out.println("Choose your spaceship:\n1 - Mining Ship\n2 - Military Ship\n3 - Give up and exit");
-
-                System.out.print(">.");
-
+            if(value == 1){
+                System.out.print("Username to save as: ");
+                String username = sc.nextLine();
+                game.saveScore(game.getFinalScore(), username);
+            }
+            else if(value == 3) {
+                System.out.println(game.readScores());
+                System.out.println("Do you want to save this score?\n1 - Yes\n2 - No");
                 while (!sc.hasNextInt())
                     sc.next();
                 value = sc.nextInt();
                 sc.nextLine();
-                if (value == 1 || value == 2) {
-                    game.selectShip(value);
-                } else if (value == 4)
-                    exit = true;
-            } else if (value == 4) {
-                exit = true;
+
+                if (value == 1) {
+                    System.out.print("Username to save as: ");
+                    String username = sc.nextLine();
+                    game.saveScore(game.getFinalScore(), username);
+                }
             }
+
+
+        } while(value > 3);
+
+
+        do {
+            System.out.println("What do you want to do?");
+            System.out.println(Colors.ANSI_GREEN + "1 - Play again." + Colors.ANSI_RESET);
+            System.out.println(Colors.ANSI_RED + "2 - Exit" + Colors.ANSI_RESET);
+            System.out.print(">.");
+
+            while (!sc.hasNextInt())
+                sc.next();
+            value = sc.nextInt();
+            sc.nextLine();
+
+            if(value == 1)
+                game.start();
+            else if(value == 2)
+                exit = true;
         }
-        while(value > 4);
+        while(value > 2);
     }
+
+    private void UILastChance() {
+        if(game.getLastChance()){
+            game.end();
+            return;
+        }
+
+        System.out.println("You've ran out of fuel but you may still have resources to convert and make some more! Press Enter to continue");
+        sc.nextLine();
+        craftOptions();
+        game.savePlanet();
+        game.setLastChance();
+
+    }
+
+    //--------------------------------------------
+
 
     private void showShipsStats() {
         game.getShipsStats();
@@ -445,10 +499,10 @@ public class Text {
         if(conversion == 1){
             do {
                 System.out.println("Which resource do you want to craft?"); //black red blue green
-                System.out.println("1 - Black");
-                System.out.println("2 - Red");
-                System.out.println("3 - Blue");
-                System.out.println("4 - Green");
+                System.out.println(Colors.ANSI_BLACK + "1 - Black" + Colors.ANSI_RESET);
+                System.out.println(Colors.ANSI_RED + "2 - Red" + Colors.ANSI_RESET);
+                System.out.println(Colors.ANSI_BLUE + "3 - Blue" + Colors.ANSI_RESET);
+                System.out.println(Colors.ANSI_GREEN + "4 - Green" + Colors.ANSI_RESET);
 
                 while (!sc.hasNextInt())
                     sc.next();
@@ -456,10 +510,10 @@ public class Text {
                 sc.nextLine(); //O nextInt não limpa o enter em buffer
 
                 System.out.println("From which resource?"); //black red blue green
-                System.out.println("1 - Black");
-                System.out.println("2 - Red");
-                System.out.println("3 - Blue");
-                System.out.println("4 - Green");
+                System.out.println(Colors.ANSI_BLACK + "1 - Black" + Colors.ANSI_RESET);
+                System.out.println(Colors.ANSI_RED + "2 - Red" + Colors.ANSI_RESET);
+                System.out.println(Colors.ANSI_BLUE + "3 - Blue" + Colors.ANSI_RESET);
+                System.out.println(Colors.ANSI_GREEN + "4 - Green" + Colors.ANSI_RESET);
 
 
                 while (!sc.hasNextInt())

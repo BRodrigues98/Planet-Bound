@@ -1,18 +1,21 @@
 package pt.isec.br.TP_PA19_20.logic.data.ship;
 
+
 public class Drone {
     private int posX;
     private int posY;
     private int hp;
     private String resourceFound;
 
+
+    //------------ CONSTRUCTOR ------------
     public Drone() {
         this.posX = 0;
         this.posY = 0;
         this.hp = 6;
         resourceFound = null;
     }
-
+    //-------------------------------------
 
     //------------ GETTERS/SETTERS ------------
     public int getPosX() { return posX; }
