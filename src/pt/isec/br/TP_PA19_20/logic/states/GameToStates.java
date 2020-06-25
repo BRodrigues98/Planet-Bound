@@ -21,7 +21,7 @@ public class GameToStates {
 
     public IStates getState() { return state; }
 
-    //public void setState(IStates state) { this.state = state; }
+    public void setState(IStates state) { this.state = state; }
 
     public List<String> getLogs() { return data.getLogs(); }
 

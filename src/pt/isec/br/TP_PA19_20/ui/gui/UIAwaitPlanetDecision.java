@@ -2,6 +2,7 @@ package pt.isec.br.TP_PA19_20.ui.gui;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -18,15 +19,19 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 class UIAwaitPlanetDecision extends VBox {
-    DataGameObs dgObs;
-    HBox hbPlanet = new HBox();
-    HBox hbShip = new HBox();
-    ImageView planetImg = new ImageView();
-    ImageView shipImg = new ImageView();
-    ImageView spaceStation = new ImageView();
-    ImageView portalImg = new ImageView();
-
-    private final String defaultLeftText = "This area will show stats if you hover an important item";
+    private DataGameObs     dgObs;
+    private HBox            hbPlanet        = new HBox();
+    private HBox            hbShip          = new HBox();
+    private ImageView       planetImg       = new ImageView();
+    private ImageView       shipImg         = new ImageView();
+    private ImageView       spaceStation    = new ImageView();
+    private ImageView       portalImg       = new ImageView();
+    private Tooltip         ttPlanet        = new Tooltip("Land on the Planet");
+    private Tooltip         ttShip          = new Tooltip("Convert your resources");
+    private Tooltip         ttSs            = new Tooltip("Land on the Space Station");
+    private Tooltip         ttPortal        = new Tooltip("Move to next planet");
+    private Alert           showMining      = new Alert(Alert.AlertType.INFORMATION);
+    private final String    defaultLeftText = "This area will show stats if you hover an important item";
 
     public UIAwaitPlanetDecision(DataGameObs dgObsN) {
         dgObs = dgObsN;
@@ -51,6 +56,8 @@ class UIAwaitPlanetDecision extends VBox {
             }
             else
                 spaceStation.setDisable(true);
+
+
         }
         else
             planetImg.setDisable(true);
@@ -66,22 +73,90 @@ class UIAwaitPlanetDecision extends VBox {
         }
 
 
+        //Handlers
+        //Planeta
+
+
+        planetImg.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                int dHp = dgObs.getDroneHp();
+                dgObs.land();
+                if (dgObs.hasDrone()) {
+                    if(dHp == dgObs.getDroneHp())
+                        showMining.setContentText(dgObs.getMiningResults());
+                    else
+                        showMining.setContentText(dgObs.getMiningResults() + "\nYour drone lost " + (dHp - dgObs.getDroneHp()) + " armor in a fight with an alien!");
+                    if(!dgObs.isExplorationAlive())
+                        showMining.setContentText("Couldn't land. You don't have an Exploration Officer.");
+                }
+                else {
+                    showMining.setContentText("Your drone was destroyed. You'll need to buy a new one at a Space Station.");
+                }
+                showMining.showAndWait();
+
+                if(dgObs.wasFullyMined()){
+                    dgObs.setInstruction("Do you want to convert your resources or advance in space?");
+                }
+                dgObs.setShipText(dgObs.getShipText());
+            }
+        });
+
+        //Nave
+
+        shipImg.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if(dgObs.isCargoAlive()) {
+                    dgObs.savePlanet();
+
+                    dgObs.setInstruction("Select an option to convert your resources.");
+                    dgObs.setShipText(dgObs.getShipText());
+
+                    dgObs.convert();
+                }
+                else{
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Cargo Hold Officer dead");
+                    alert.setContentText("Your Cargo Hold Officer is dead. You can't convert resources.");
+
+                    alert.showAndWait();
+                }
+            }
+        });
+
+        //Space Station
+        spaceStation.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                dgObs.landOnSS();
+            }
+        });
+
+        //Portal
+
+        portalImg.setOnMouseClicked((MouseEvent f) ->{
+            dgObs.nextTurn();
+        });
+
+
         StateID stateID = dgObs.getStateID();
         setVisible(stateID == StateID.AWAIT_PLANET_DECISON);
+        setManaged(stateID == StateID.AWAIT_PLANET_DECISON);
     }
 
     private void organizeComponents() {
 
-        BackgroundImage bg = new BackgroundImage(ImageLoader.loadImage("space.png"), BackgroundRepeat.REPEAT,
+        BackgroundImage bgImg = new BackgroundImage(ImageLoader.loadImage("space.png"), BackgroundRepeat.REPEAT,
                 BackgroundRepeat.REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
-        Background bg2 = new Background(bg);
-        setBackground(bg2);
+        Background bg = new Background(bgImg);
+        setBackground(bg);
 
 
         //Tratar do planeta
         planetImg.setPreserveRatio(true);
         planetImg.setFitWidth(500);
-        Tooltip ttPlanet = new Tooltip("Land on the Planet");
+
         ttPlanet.setShowDelay(Duration.ZERO);
         Tooltip.install(planetImg, ttPlanet);
 
@@ -92,9 +167,9 @@ class UIAwaitPlanetDecision extends VBox {
         //Tratar da nave
         shipImg.setPreserveRatio(true);
         shipImg.setFitWidth(200);
-        Tooltip ttShip = new Tooltip("Convert your resources");
         ttShip.setShowDelay(Duration.ZERO);
         Tooltip.install(shipImg, ttShip);
+
 
         hbShip.setPadding(new Insets(20, 0, 0, 50));
         hbShip.getChildren().add(shipImg);
@@ -103,7 +178,6 @@ class UIAwaitPlanetDecision extends VBox {
         //Tratar da spacestation
         spaceStation.setPreserveRatio(true);
         spaceStation.setFitWidth(100);
-        Tooltip ttSs = new Tooltip("Land on the Space Station");
         ttSs.setShowDelay(Duration.ZERO);
         Tooltip.install(spaceStation, ttSs);
 
@@ -115,7 +189,6 @@ class UIAwaitPlanetDecision extends VBox {
         portalImg.setImage(ImageLoader.loadImage("portal.gif"));
         portalImg.setPreserveRatio(true);
         portalImg.setFitWidth(100);
-        Tooltip ttPortal = new Tooltip("Move to next planet");
         ttPortal.setShowDelay(Duration.ZERO);
         Tooltip.install(portalImg, ttPortal);
 
@@ -123,7 +196,7 @@ class UIAwaitPlanetDecision extends VBox {
         hbShip.getChildren().add(portalImg);
 
 
-        getChildren().addAll(hbShip, hbPlanet);
+        showMining.setTitle("Mining Results");
 
         //HANDLERS
 
@@ -149,14 +222,6 @@ class UIAwaitPlanetDecision extends VBox {
             ttPlanet.setY(f.getScreenY());
         });
 
-
-        planetImg.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                dgObs.land();
-            }
-        });
-
         //Nave
         shipImg.setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
@@ -179,14 +244,6 @@ class UIAwaitPlanetDecision extends VBox {
             ttShip.setY(f.getScreenY());
         });
 
-        shipImg.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                dgObs.convert();
-            }
-        });
-
-        //Space Station
         spaceStation.setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -228,8 +285,8 @@ class UIAwaitPlanetDecision extends VBox {
             ttPortal.setY(f.getScreenY());
         });
 
-        portalImg.setOnMouseClicked((MouseEvent f) ->{
-            dgObs.nextTurn();
-        });
+        getChildren().addAll(hbShip, hbPlanet);
+
+
     }
 }

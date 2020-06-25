@@ -7,15 +7,13 @@ public class AwaitMovement extends StateAdapter{
 
     public AwaitMovement(DataGame data) {
         super(data);
-        //data.setState(this);
+        data.setState(this);
     }
 
     @Override
     public IStates move(boolean firstMove) {
         if(firstMove){
             data.setFirstMove(false);
-            //data.setPreviousPosition(data.getPosition());
-            //data.setPosition("planet");
 
             return new AwaitPlanetDecision(data);
         }

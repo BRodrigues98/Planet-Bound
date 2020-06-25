@@ -8,6 +8,7 @@ import pt.isec.br.TP_PA19_20.logic.data.planet.alien.*;
 import pt.isec.br.TP_PA19_20.logic.data.ship.Drone;
 import pt.isec.br.TP_PA19_20.logic.data.ship.Mining;
 import pt.isec.br.TP_PA19_20.logic.data.ship.Ship;
+import pt.isec.br.TP_PA19_20.logic.states.AwaitSSDecision;
 import pt.isec.br.TP_PA19_20.logic.states.AwaitSpaceshipSelection;
 import pt.isec.br.TP_PA19_20.logic.states.IStates;
 import pt.isec.br.TP_PA19_20.ui.text.Colors;
@@ -44,6 +45,7 @@ public class DataGame implements Serializable {
     private List<String> events;
     private boolean wasRedDot;
     private boolean alreadyHadChance;
+    private IStates state;
 
 
     //------------ CONSTRUCTOR ------------
@@ -289,7 +291,7 @@ public class DataGame implements Serializable {
             }
             //Se o artefacto já foi encontrado, cria-se outro recurso mas sem contar com o artefacto
             else if(planet instanceof BluePlanet){
-                if(((BluePlanet) planet).isFoundArtifact()){
+                if( ( (BluePlanet) planet ).isFoundArtifact() ){
                     index = (int) (Math.random() * (planet.getNumResources() - 1));
                     resource = planet.getTypeResource().get(index);
                 }
@@ -348,6 +350,7 @@ public class DataGame implements Serializable {
                         planet.getAlien().setPosY(planet.getAlien().getPosY() + 1);
                 }
             }
+
             //Só sai quando o drone já tem o recurso, voltar para a posição inicial
             //Podiamos nao fazer a movimentacao do alien, porque este nao encontra o drone a partir do momento em que ele apanha o recurso (porque se movem ao mesmo tempo)
             //Mas para a interface grafica (futura) é interessante ver o movimento do drone na mesma
@@ -871,4 +874,15 @@ public class DataGame implements Serializable {
         return "On your ship workbench you can:\n- Convert one type of resource into another\n- Craft an energy shield (costs 1 black, green and blue)\n" +
                 "- Craft an ammo cell (costs 1 black and blue resource)\n- Craft a fuel cell (costs 1 black, red and green resources";
     }
+
+
+    public void setState(IStates state) {
+        this.state = state;
+    }
+
+    public IStates getState() {
+        return state;
+    }
+
+
 }

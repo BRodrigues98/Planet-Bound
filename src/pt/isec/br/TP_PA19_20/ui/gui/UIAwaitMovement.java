@@ -2,6 +2,7 @@ package pt.isec.br.TP_PA19_20.ui.gui;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -19,6 +20,12 @@ import java.beans.PropertyChangeListener;
 
 class UIAwaitMovement extends VBox {
     private DataGameObs dgObs;
+    Text txtPlanet = new Text();
+    ImageView spaceTravelGif = new ImageView();
+    Button btnGo = new Button("Go!");
+    VBox boxGif = new VBox();
+    VBox boxText = new VBox();
+    VBox boxButton = new VBox();
 
     public UIAwaitMovement(DataGameObs dgObsN) {
         dgObs = dgObsN;
@@ -31,83 +38,29 @@ class UIAwaitMovement extends VBox {
 
         organizeComponents();
         updateView();
-        /*
-        //Registar o listener
-        dgObs.registerPropertyChangeListener(Type.STATE, new PropertyChangeListenerJFXAdapter() {
-            @Override
-            public void onChange(PropertyChangeEvent evt) {
-                if(dgObs.getStateID() == StateID.AWAIT_MOVEMENT){
-                    setVisible(true);
-                    bottomText.setText("Let's find out where we're going next");
-                    rightText.setText(dgObs.getShipText());
-                    usefulArea.setBackground(null);
-                }
-                else
-                    setVisible(false);
-
-                spaceTravelGif.setImage(ImageLoader.loadImage("spaceTravelGif.gif"));
-                spaceTravelGif.setPreserveRatio(true);
-                spaceTravelGif.setFitWidth(600);
-                boxGif.setPadding(new Insets(100, 0, 0, 225));
-                boxGif.getChildren().add(spaceTravelGif);
-
-                txtPlanet.setTextAlignment(TextAlignment.CENTER);
-                txtPlanet.setFont(new Font("Gotham", 20));
-                if(dgObs.isFirstMove())
-                    txtPlanet.setText("Let's find your first planet!");
-                else
-                    txtPlanet.setText("Let's keep going!");
-                boxText.setPadding(new Insets(25, 0, 0, 400));
-                boxText.getChildren().add(txtPlanet);
-
-                btnGo.setPadding(new Insets(15));
-                btnGo.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent mouseEvent) {
-                        dgObs.move(dgObs.isFirstMove());
-                    }
-                });
-
-
-                boxButton.setPadding(new Insets(25, 0, 0, 490));
-                boxButton.getChildren().add(btnGo);
-                getChildren().addAll(boxGif, boxText, boxButton);
-            }
-        });
-*/
 
     }
 
     private void updateView() {
         StateID stateID = dgObs.getStateID();
         setVisible(stateID == StateID.AWAIT_MOVEMENT);
+        setManaged(stateID == StateID.AWAIT_MOVEMENT);
 
-    }
-
-    private void organizeComponents() {
-
-        ImageView spaceTravelGif = new ImageView();
-        spaceTravelGif.setImage(ImageLoader.loadImage("spaceTravelGif.gif"));
-        spaceTravelGif.setPreserveRatio(true);
-        spaceTravelGif.setFitWidth(600);
-
-        VBox boxGif = new VBox();
-        boxGif.setPadding(new Insets(100, 0, 0, 225));
-        boxGif.getChildren().add(spaceTravelGif);
-
-        Text txtPlanet = new Text();
-        txtPlanet.setTextAlignment(TextAlignment.CENTER);
-        txtPlanet.setFont(new Font("Gotham", 20));
         if(dgObs.isFirstMove())
             txtPlanet.setText("Let's find your first planet!");
         else
             txtPlanet.setText("Let's keep going!");
 
-        VBox boxText = new VBox();
-        boxText.setPadding(new Insets(25, 0, 0, 400));
-        boxText.getChildren().add(txtPlanet);
+    }
 
-        Button btnGo = new Button("Go!");
+    private void organizeComponents() {
+
+        spaceTravelGif.setImage(ImageLoader.loadImage("spaceTravelGif.gif"));
+        spaceTravelGif.setPreserveRatio(true);
+        spaceTravelGif.setFitWidth(600);
+
+        txtPlanet.setFont(new Font(25));
+
         btnGo.setPadding(new Insets(15));
         btnGo.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -118,9 +71,9 @@ class UIAwaitMovement extends VBox {
             }
         });
 
-        VBox boxButton = new VBox();
-        boxButton.setPadding(new Insets(25, 0, 0, 490));
-        boxButton.getChildren().add(btnGo);
-        getChildren().addAll(boxGif, boxText, boxButton);
+        setAlignment(Pos.BASELINE_CENTER);
+        setSpacing(30);
+        setPadding(new Insets(150, 0, 0, 0));
+        getChildren().addAll(spaceTravelGif, txtPlanet, btnGo);
     }
 }

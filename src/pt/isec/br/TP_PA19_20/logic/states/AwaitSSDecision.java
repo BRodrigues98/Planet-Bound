@@ -7,7 +7,7 @@ public class AwaitSSDecision extends StateAdapter{
     boolean cargoUpgradedThisTurn;
     public AwaitSSDecision(DataGame data) {
         super(data);
-        //data.setState(this);
+        data.setState(this);
         cargoUpgradedThisTurn = false;
     }
 

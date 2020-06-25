@@ -8,7 +8,7 @@ public class AwaitDiceRoll  extends StateAdapter{
 
     public AwaitDiceRoll(DataGame data) {
         super(data);
-        //data.setState(this);
+        data.setState(this);
     }
 
     @Override

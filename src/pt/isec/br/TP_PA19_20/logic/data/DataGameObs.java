@@ -55,15 +55,38 @@ public class DataGameObs {
 
     public void land() {
         game.land();
+
         props.firePropertyChange(Type.STATE.toString(), null, null);
     }
 
     public void convert() {
-       // fireEvents(game.convert());
+        game.convert();
+
+        props.firePropertyChange(Type.STATE.toString(), null, null);
+    }
+
+    public void convert(int resNew, int resOld) {
+        game.convert(resNew, resOld);
+
+        //props.firePropertyChange(Type.STATE.toString(), null, null);
+    }
+
+    public void convert(int type){
+        game.convert(type);
     }
 
     public void nextTurn() {
         game.nextTurn();
+        props.firePropertyChange(Type.STATE.toString(), null, null);
+    }
+
+    public void stopConvert() {
+        game.stopConvert();
+        props.firePropertyChange(Type.STATE.toString(), null, null);
+    }
+
+    public void landOnSS() {
+        game.landOnSS();
         props.firePropertyChange(Type.STATE.toString(), null, null);
     }
 
@@ -118,6 +141,8 @@ public class DataGameObs {
             s += "\t" + game.getShip().getCargoType().get(i) + ": " + game.getShip().getCargoHold().get(i) +
                     " of " + game.getShip().getMaxCargo() + "\n";
         }
+
+        s+= "Artifacts: " + game.getShip().getNumArtifacts() + " of 5\nDrone: " + game.getShip().getDrone().getHp() + " of 6 Armor\n";
 
 
         return s;
@@ -180,6 +205,91 @@ public class DataGameObs {
     public String getInstruction(){
         return instruction;
     }
+
+    public boolean wasFullyMined() {
+        return game.wasFullyMined();
+    }
+
+    public boolean hasDrone() {
+        return game.hasDrone();
+    }
+
+    public String getMiningResults() {
+        return game.getMiningResults();
+    }
+
+    public boolean isExplorationAlive() {
+        return game.isExplorationAlive();
+    }
+
+    public boolean isCargoAlive() {
+        return game.isCargoAlive();
+    }
+
+    public void savePlanet() {
+        game.savePlanet();
+    }
+
+    public DataGame getData() {
+        return game.getData();
+    }
+
+    public int getBlackRes() {
+        return game.getBlackRes();
+    }
+
+   public int getRedRes() {
+        return game.getRedRes();
+    }
+
+   public int getBlueRes() {
+        return game.getBlueRes();
+    }
+
+   public int getGreenRes() {
+        return game.getGreenRes();
+    }
+
+    public boolean isDroneFull() {
+        return game.isDroneFull();
+    }
+
+    public int getDroneHp() {
+        return game.getDroneHp();
+    }
+
+    public int getResource(int index) {
+        return game.getResource(index);
+    }
+
+    public int getMaxResource() {
+        return game.getMaxResource();
+    }
+
+    public boolean isShieldFull() {
+        return game.isShieldFull();
+    }
+
+    public int getShield() {
+        return game.getShield();
+    }
+
+    public boolean isAmmoFull() {
+        return game.isAmmoFull();
+    }
+
+    public int getAmmo() {
+        return game.getAmmo();
+    }
+
+    public boolean isFuelFull() {
+        return game.isFuelFull();
+    }
+
+    public int getFuel() {
+        return game.getFuel();
+    }
+
 
     //-----------------------------------
 }

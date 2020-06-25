@@ -12,25 +12,24 @@ public class AwaitResourcesConversion extends StateAdapter{
     public IStates stopConvert() {
         data.addLogs("Going back to main deck");
         //return new AwaitDiceRoll(data);
-        return this;
+        return new AwaitPlanetDecision(data);
     }
 
     @Override
     public IStates convert(int type) {
         int converted = data.convert(type);
-        if (converted == 0)
-            return this;
-        else
-            return new AwaitResourcesConversion(data);
+        return this;
     }
 
     @Override
     public IStates convert(int resNew, int resOld) {
         int converted = data.convert(resNew, resOld);
-        if (converted == 0)
+        /*if (converted == 0)
             return this;
         else
             return new AwaitResourcesConversion(data);
+         */
+        return this;
     }
 
     @Override

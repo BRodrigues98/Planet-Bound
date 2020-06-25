@@ -8,7 +8,7 @@ public class LastChance extends StateAdapter {
     public LastChance(DataGame data) {
         super(data);
         data.getShip().setFuel(0);
-        //data.setState(this);
+        data.setState(this);
     }
 
     @Override

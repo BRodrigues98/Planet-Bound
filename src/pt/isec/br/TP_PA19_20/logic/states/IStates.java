@@ -14,6 +14,7 @@ public interface IStates extends Serializable {
     IStates landOnSS();
     IStates returnToShip();
     IStates land();
+    IStates convert();
     IStates convert(int type);
     IStates convert(int resNew, int resOld);
     IStates roll(int type);

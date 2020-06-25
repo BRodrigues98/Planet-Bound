@@ -132,6 +132,7 @@ class UIAwaitSpaceshipSelection extends HBox {
 
         StateID stateID = dgObs.getStateID();
         setVisible(stateID == StateID.AWAIT_SPACESHIP_SELECTION);
+        setManaged(stateID == StateID.AWAIT_SPACESHIP_SELECTION);
     }
 
     private void organizeComponents() {

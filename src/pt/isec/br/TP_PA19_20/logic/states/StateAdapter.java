@@ -38,6 +38,9 @@ public abstract class StateAdapter implements IStates {
     public IStates land() { return this; }
 
     @Override
+    public IStates convert() { return this; }
+
+    @Override
     public IStates convert(int type) { return this; }
 
     @Override

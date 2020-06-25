@@ -6,7 +6,7 @@ import pt.isec.br.TP_PA19_20.logic.data.DataGame;
 public class AwaitMiningConfirmation extends StateAdapter{
     public AwaitMiningConfirmation(DataGame data) {
         super(data);
-        //data.setState(this);
+        data.setState(this);
     }
 
     @Override

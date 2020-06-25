@@ -9,11 +9,9 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import pt.isec.br.TP_PA19_20.logic.Debug;
 import pt.isec.br.TP_PA19_20.logic.data.DataGameObs;
 import pt.isec.br.TP_PA19_20.resources.MusicPlayer;
 
@@ -34,6 +32,9 @@ public class gui extends BorderPane {
         UIAwaitSpaceshipSelection uiss = new UIAwaitSpaceshipSelection(dgObs);
         UIAwaitMovement uiam = new UIAwaitMovement(dgObs);
         UIAwaitPlanetDecision uiapd = new UIAwaitPlanetDecision(dgObs);
+        UIAwaitMiningConfirmation uiamc = new UIAwaitMiningConfirmation(dgObs);
+        UIAwaitResourcesConversion uiarc = new UIAwaitResourcesConversion(dgObs);
+
 
         DataViewLeft dvL = new DataViewLeft(dgObs);
         DataViewRight dvR = new DataViewRight(dgObs);
@@ -41,6 +42,14 @@ public class gui extends BorderPane {
 
         uiam.setVisible(false);
         uiapd.setVisible(false);
+        uiamc.setVisible(false);
+        uiarc.setVisible(false);
+
+        uiam.setManaged(false);
+        uiapd.setManaged(false);
+        uiamc.setManaged(false);
+        uiarc.setManaged(false);
+
 
         MusicPlayer.playMusic("lol.mp3", true);
 
@@ -53,7 +62,7 @@ public class gui extends BorderPane {
 
 
 
-        usefulArea.getChildren().addAll(uiss, uiam, uiapd, dvL, dvR, dvB);
+        usefulArea.getChildren().addAll(dvL, dvR, dvB, uiss, uiam, uiapd, uiamc, uiarc);
 
 
         //Lado esquerdo
@@ -96,7 +105,7 @@ public class gui extends BorderPane {
 
         Menu volume = new Menu("Volume");
         CustomMenuItem customMenuItem = new CustomMenuItem();
-        Slider slider = new Slider(0, 100, 50);
+        Slider slider = new Slider(0, 100, 25);
         slider.setOrientation(Orientation.VERTICAL);
         customMenuItem.setContent(slider);
         customMenuItem.setHideOnClick(false);
@@ -130,7 +139,7 @@ public class gui extends BorderPane {
         });
 
         //Volume
-        volume.setOnAction((ActionEvent e) -> {
+        volume.setOnShowing(e -> {
 
             slider.valueProperty().addListener(new ChangeListener<Number>() {
                 @Override
