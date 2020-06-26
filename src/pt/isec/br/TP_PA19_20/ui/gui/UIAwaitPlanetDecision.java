@@ -76,7 +76,6 @@ class UIAwaitPlanetDecision extends VBox {
         //Handlers
         //Planeta
 
-
         planetImg.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -126,6 +125,7 @@ class UIAwaitPlanetDecision extends VBox {
         });
 
         //Space Station
+
         spaceStation.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -137,6 +137,9 @@ class UIAwaitPlanetDecision extends VBox {
 
         portalImg.setOnMouseClicked((MouseEvent f) ->{
             dgObs.nextTurn();
+
+            dgObs.setShipText(dgObs.getShipText());
+            dgObs.setInstruction("Ready to go?");
         });
 
 

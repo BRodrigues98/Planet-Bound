@@ -120,18 +120,18 @@ public class UIAwaitResourcesConversion extends HBox {
 
         boxButtons.getChildren().addAll(btnOneToAnother, btnDroneArmor, btnEnergyShield, btnExtraAmmo, btnExtraFuel, btnGoBack);
 
-
-        boxCLabel.getChildren().addAll(oldR, newR);
-        boxResourceC.getChildren().addAll(boxCLabel, boxConvert, boxBtn);
-        boxConvert.getChildren().addAll(cbOld, cbNew);
-
         boxBtn.getChildren().addAll(btnOk, btnCancel);
+        boxCLabel.getChildren().addAll(oldR, newR);
+        boxConvert.getChildren().addAll(cbOld, cbNew);
+        boxResourceC.getChildren().addAll(boxCLabel, boxConvert, boxBtn);
+
+
 
         boxResourceC.setVisible(false);
         boxResourceC.setManaged(false);
         
 
-        getChildren().addAll(boxButtons, boxResourceC); //, costs);
+        getChildren().addAll(boxButtons, boxResourceC);
         setAlignment(Pos.BASELINE_CENTER);
     }
 

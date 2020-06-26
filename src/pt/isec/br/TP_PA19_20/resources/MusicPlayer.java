@@ -14,7 +14,7 @@ public class MusicPlayer {
         mp.setStartTime(Duration.ZERO);
         mp.setStopTime(music.getDuration());
         //TODO: Alterar para 0.25
-        mp.setVolume(0);
+        mp.setVolume(0.25);
         if(onRepeat){
             mp.setOnEndOfMedia(new Runnable() {
                 @Override
@@ -26,6 +26,20 @@ public class MusicPlayer {
 
         mp.setOnReady(() -> {
                 mp.play();
+        });
+    }
+
+    public static void playMusic(String name, int volume) {
+        String path = MusicPlayer.class.getResource("sounds/"+name).toExternalForm();
+        //System.out.println("Path: "+path);
+        Media music = new Media(path);
+        mp = new MediaPlayer(music);
+        mp.setStartTime(Duration.ZERO);
+        mp.setStopTime(music.getDuration());
+
+        mp.setVolume(volume);
+        mp.setOnReady(() -> {
+            mp.play();
         });
     }
 

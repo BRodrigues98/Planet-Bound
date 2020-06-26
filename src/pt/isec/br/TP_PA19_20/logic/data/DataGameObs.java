@@ -90,6 +90,11 @@ public class DataGameObs {
         props.firePropertyChange(Type.STATE.toString(), null, null);
     }
 
+    public void roll(int type) {
+        game.roll(type);
+        props.firePropertyChange(Type.STATE.toString(), null, null);
+    }
+
     //-----------------------------------
 
     //------------ LOAD/SAVE ------------
@@ -142,8 +147,16 @@ public class DataGameObs {
                     " of " + game.getShip().getMaxCargo() + "\n";
         }
 
-        s+= "Artifacts: " + game.getShip().getNumArtifacts() + " of 5\nDrone: " + game.getShip().getDrone().getHp() + " of 6 Armor\n";
+        s+= "Artifacts: " + game.getShip().getNumArtifacts() + " of 5\nDrone: " + game.getShip().getDrone().getHp() + " of 6 Armor\n" +
+                "Officers:\n";
 
+        for (int i = 0; i < game.getOfficers().size(); i++) {
+            s += game.getPositions().get(i) + ": ";
+            if(game.getOfficers().get(i))
+                s += "Alive\n";
+            else
+                s += "Dead\n";
+        }
 
         return s;
     }
@@ -288,6 +301,18 @@ public class DataGameObs {
 
     public int getFuel() {
         return game.getFuel();
+    }
+
+    public String getEvent() {
+        return game.getEvent();
+    }
+
+    public boolean getWasRedDot() {
+        return game.wasRedDot();
+    }
+
+    public boolean getWasWormhole() {
+        return game.getWasWormhole();
     }
 
 

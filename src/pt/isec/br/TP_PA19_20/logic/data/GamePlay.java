@@ -8,6 +8,7 @@ import pt.isec.br.TP_PA19_20.logic.states.IStates;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class GamePlay implements Serializable {
@@ -62,6 +63,9 @@ public class GamePlay implements Serializable {
         state = state.landOnSS();
     }
 
+    public void roll(int type) {
+        state = state.roll(type);
+    }
 
     //------------------------------------
 
@@ -199,6 +203,26 @@ public class GamePlay implements Serializable {
 
     public int getFuel() {
         return data.getShip().getFuel();
+    }
+
+    public String getEvent() {
+        return data.getEvent();
+    }
+
+    public boolean wasRedDot() {
+        return data.isWasRedDot();
+    }
+
+    public List<Boolean> getOfficers() {
+        return data.getOfficers();
+    }
+
+    public List<String> getPositions() {
+        return data.getPositions();
+    }
+
+    public boolean getWasWormhole() {
+        return data.isWormhole();
     }
 
     //------------------------------------

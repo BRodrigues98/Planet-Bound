@@ -46,6 +46,8 @@ public class DataGame implements Serializable {
     private boolean wasRedDot;
     private boolean alreadyHadChance;
     private IStates state;
+    private String event;
+    private boolean wormhole;
 
 
     //------------ CONSTRUCTOR ------------
@@ -87,6 +89,8 @@ public class DataGame implements Serializable {
         positions.add("Cargo Hold Officer");
         wasRedDot = false;
         alreadyHadChance = false;
+        event = null;
+        wormhole = false;
     }
 
     //-------------------------------------
@@ -181,6 +185,7 @@ public class DataGame implements Serializable {
         double wormHole = Math.random();
         if(wormHole <= 0.125){
             addLogs("You're going through a " + Colors.ANSI_YELLOW + "wormhole" + Colors.ANSI_RESET + "!");
+            wormhole = true;
             int shieldToLose, fuelToLose;
             if(!officers.get(3)){
                 shieldToLose = 4;
@@ -485,6 +490,7 @@ public class DataGame implements Serializable {
         switch (rand){
             case 1: {   //Crew member death
                 addLogs("A crew member is injured due to a system malfunction.");
+                event = "A crew member is injured due to a system malfunction.";
                 if (ship.getExtraMember().isEmpty()) {  //Verifica se existe algum officer nos extra
                     int index = 0;
                     //Procura o último officer vivo e guarda o indice em index
@@ -509,9 +515,11 @@ public class DataGame implements Serializable {
                 if (ship.getCargoHold().get(randomIndex) + howMany > ship.getMaxCargo()) {
                     ship.getCargoHold().set(randomIndex, ship.getMaxCargo());
                     addLogs("You've found a salvaged ship. You've found " + ship.getCargoType().get(randomIndex) + " resource in that ship. Unfortunately you had to leave some behind because it filled your cargo hold for that resource.");
+                    event = "You've found a salvaged ship. You've found " + ship.getCargoType().get(randomIndex) + " resource in that ship. Unfortunately you had to leave some behind because it filled your cargo hold for that resource.";
                 } else {
                     ship.getCargoHold().set(randomIndex, (ship.getCargoHold().get(randomIndex) + howMany));
                     addLogs("You've found a salvaged ship. You've found " + howMany + " " + ship.getCargoType().get(randomIndex) + " resources in that ship and they have been added to your cargo hold.");
+                    event = "You've found a salvaged ship. You've found " + howMany + " " + ship.getCargoType().get(randomIndex) + " resources in that ship and they have been added to your cargo hold.";
                 }
                 break;
             }
@@ -533,15 +541,18 @@ public class DataGame implements Serializable {
                     ship.getCargoHold().set(randomIndex, (ship.getCargoHold().get(randomIndex) - howMany));
 
                 addLogs("You've had a cargo loss. You now have " + ship.getCargoHold().get(randomIndex) + " " + ship.getCargoType().get(randomIndex) + " resources.");
+                event = "You've had a cargo loss. You now have " + ship.getCargoHold().get(randomIndex) + " " + ship.getCargoType().get(randomIndex) + " resources.";
                 break;
             }
             case 4: {   //Fuel loss
                 ship.setFuel(ship.getFuel() - 1);
                 addLogs("You've accidentally used too much fuel on a fuel run. You now have " + ship.getFuel() + ".");
+                event = "You've accidentally used too much fuel on a fuel run. You now have " + ship.getFuel() + ".";
                 break;
             }
             case 5: {   //Nothing happens
                 addLogs("Fortunately, nothing happened. Smooth sailing.");
+                event = "Fortunately, nothing happened. Smooth sailing.";
                 break;
             }
             case 6: {   //New crew member
@@ -559,6 +570,7 @@ public class DataGame implements Serializable {
                     ship.getExtraMember().add(true);
 
                 addLogs("You've found a ship in distress with a lone crew member and he is added to your officers list.");
+                event = "You've found a ship in distress with a lone crew member and he is added to your officers list.";
             }
         }
 
@@ -885,4 +897,24 @@ public class DataGame implements Serializable {
     }
 
 
+    public String getEvent() {
+        String s = event;
+        event = null;
+        return s;
+    }
+
+    public void setEvent(String event) {
+        this.event = event;
+    }
+
+    public boolean isWormhole() {
+        boolean b = wormhole;
+        b = wormhole;
+        wormhole = false;
+        return b;
+    }
+
+    public void setWormhole(boolean wormhole) {
+        this.wormhole = wormhole;
+    }
 }

@@ -3,6 +3,7 @@ package pt.isec.br.TP_PA19_20.ui.gui;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -15,6 +16,7 @@ import pt.isec.br.TP_PA19_20.integration.Type;
 import pt.isec.br.TP_PA19_20.logic.data.DataGameObs;
 import pt.isec.br.TP_PA19_20.resources.ImageLoader;
 
+import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -67,7 +69,18 @@ class UIAwaitMovement extends VBox {
             public void handle(MouseEvent mouseEvent) {
                 dgObs.move(dgObs.isFirstMove());
                 dgObs.setShipText(dgObs.getShipText());
-                dgObs.setInstruction("Choose your next move!");
+
+                if(dgObs.getWasWormhole()){
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Went through wormhole");
+                    alert.setContentText("You went through a wormhole. You lost extra cells!");
+
+                    alert.showAndWait();
+                }
+                if(!dgObs.getWasRedDot())
+                    dgObs.setInstruction("Choose your next move");
+                else
+                    dgObs.setInstruction("Choose a random event or a forced event");
             }
         });
 

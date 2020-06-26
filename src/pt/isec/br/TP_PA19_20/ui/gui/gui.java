@@ -34,6 +34,7 @@ public class gui extends BorderPane {
         UIAwaitPlanetDecision uiapd = new UIAwaitPlanetDecision(dgObs);
         UIAwaitMiningConfirmation uiamc = new UIAwaitMiningConfirmation(dgObs);
         UIAwaitResourcesConversion uiarc = new UIAwaitResourcesConversion(dgObs);
+        UIAwaitDiceRoll uiadr = new UIAwaitDiceRoll(dgObs);
 
 
         DataViewLeft dvL = new DataViewLeft(dgObs);
@@ -44,14 +45,13 @@ public class gui extends BorderPane {
         uiapd.setVisible(false);
         uiamc.setVisible(false);
         uiarc.setVisible(false);
+        uiadr.setVisible(false);
 
         uiam.setManaged(false);
         uiapd.setManaged(false);
         uiamc.setManaged(false);
         uiarc.setManaged(false);
-
-
-        MusicPlayer.playMusic("lol.mp3", true);
+        uiadr.setManaged(false);
 
         usefulArea.setStyle("-fx-padding: 5;" +
                 "-fx-border-style: solid inside;" +
@@ -60,10 +60,9 @@ public class gui extends BorderPane {
                 "-fx-border-radius: 5;" +
                 "-fx-border-color: gray;");
 
+        usefulArea.getChildren().addAll(dvL, dvR, dvB, uiss, uiam, uiapd, uiamc, uiarc, uiadr);
 
-
-        usefulArea.getChildren().addAll(dvL, dvR, dvB, uiss, uiam, uiapd, uiamc, uiarc);
-
+        MusicPlayer.playMusic("lol.mp3", true);
 
         //Lado esquerdo
         VBox leftSide = new VBox(dvL);
