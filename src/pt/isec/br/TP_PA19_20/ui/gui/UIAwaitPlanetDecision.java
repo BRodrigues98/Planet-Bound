@@ -72,8 +72,7 @@ class UIAwaitPlanetDecision extends VBox {
                 shipImg.setImage(ImageLoader.loadImage("military2.png"));
         }
 
-
-        //Handlers
+//Handlers
         //Planeta
 
         planetImg.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -129,6 +128,11 @@ class UIAwaitPlanetDecision extends VBox {
         spaceStation.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
+                dgObs.savePlanet();
+
+                dgObs.setInstruction("Select an option to buy something from the Space Station.");
+                dgObs.setShipText(dgObs.getShipText());
+
                 dgObs.landOnSS();
             }
         });
@@ -141,6 +145,7 @@ class UIAwaitPlanetDecision extends VBox {
             dgObs.setShipText(dgObs.getShipText());
             dgObs.setInstruction("Ready to go?");
         });
+
 
 
         StateID stateID = dgObs.getStateID();
@@ -287,6 +292,7 @@ class UIAwaitPlanetDecision extends VBox {
             ttPortal.setX(f.getScreenX());
             ttPortal.setY(f.getScreenY());
         });
+
 
         getChildren().addAll(hbShip, hbPlanet);
 

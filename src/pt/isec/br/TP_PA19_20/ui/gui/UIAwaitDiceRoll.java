@@ -1,6 +1,7 @@
 package pt.isec.br.TP_PA19_20.ui.gui;
 
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -138,6 +139,7 @@ public class UIAwaitDiceRoll extends VBox {
         btnCrewRescue.setAlignment(Pos.BASELINE_CENTER);
         
         hoverHandlers();
+        handlersOnAction();
 
         hbBtnsForced.getChildren().addAll(btnCrewDeath, btnSalvageShip, btnCargoLoss, btnFuelLoss, btnNoEvent, btnCrewRescue);
         hbBtnsForced.setVisible(false);
@@ -187,7 +189,7 @@ public class UIAwaitDiceRoll extends VBox {
             public void handle(MouseEvent mouseEvent) {
                 dgObs.roll(1);
 
-                Alert alert = new Alert(Alert.AlertType.ERROR);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Event");
                 alert.setContentText(dgObs.getEvent());
 
@@ -236,6 +238,163 @@ public class UIAwaitDiceRoll extends VBox {
 
 
             }
+        });
+    }
+
+    private void handlersOnAction() {
+        btnCrewDeath.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                dgObs.roll(-1);
+
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Crew Death");
+                alert.setContentText("One of crew members has died due to a system malfunction.");
+
+                alert.showAndWait();
+
+                dgObs.setShipText(dgObs.getShipText());
+                dgObs.setInstruction("Ready to go?");
+
+                hbVideo.setVisible(true);
+                hbVideo.setManaged(true);
+
+                hbChoices.setVisible(true);
+                hbChoices.setManaged(true);
+
+                hbBtnsForced.setVisible(false);
+                hbBtnsForced.setManaged(false);
+            }
+        });
+
+        btnSalvageShip.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                dgObs.roll(-2);
+
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Ship Salvage");
+                alert.setContentText("You've found an abandoned ship. You've found some extra resources.");
+
+                alert.showAndWait();
+
+                dgObs.setShipText(dgObs.getShipText());
+                dgObs.setInstruction("Ready to go?");
+
+                hbVideo.setVisible(true);
+                hbVideo.setManaged(true);
+
+                hbChoices.setVisible(true);
+                hbChoices.setManaged(true);
+
+                hbBtnsForced.setVisible(false);
+                hbBtnsForced.setManaged(false);
+            }
+
+        });
+
+        btnCargoLoss.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                dgObs.roll(-3);
+
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Cargo Loss");
+                alert.setContentText("You've had a Cargo Loss. You lost some resources.");
+
+                alert.showAndWait();
+
+                dgObs.setShipText(dgObs.getShipText());
+                dgObs.setInstruction("Ready to go?");
+
+                hbVideo.setVisible(true);
+                hbVideo.setManaged(true);
+
+                hbChoices.setVisible(true);
+                hbChoices.setManaged(true);
+
+                hbBtnsForced.setVisible(false);
+                hbBtnsForced.setManaged(false);
+            }
+
+        });
+
+        btnFuelLoss.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                dgObs.roll(-4);
+
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Fuel Loss");
+                alert.setContentText("You've accidentally used too much fuel on a fuel run.");
+
+                alert.showAndWait();
+
+                dgObs.setShipText(dgObs.getShipText());
+                dgObs.setInstruction("Ready to go?");
+
+                hbVideo.setVisible(true);
+                hbVideo.setManaged(true);
+
+                hbChoices.setVisible(true);
+                hbChoices.setManaged(true);
+
+                hbBtnsForced.setVisible(false);
+                hbBtnsForced.setManaged(false);
+            }
+
+        });
+
+        btnNoEvent.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                dgObs.roll(-5);
+
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("No Event");
+                alert.setContentText("Fortunately nothing happened. Smooth sailing.");
+
+                alert.showAndWait();
+
+                dgObs.setShipText(dgObs.getShipText());
+                dgObs.setInstruction("Ready to go?");
+
+                hbVideo.setVisible(true);
+                hbVideo.setManaged(true);
+
+                hbChoices.setVisible(true);
+                hbChoices.setManaged(true);
+
+                hbBtnsForced.setVisible(false);
+                hbBtnsForced.setManaged(false);
+            }
+
+        });
+
+        btnCrewRescue.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                dgObs.roll(-6);
+
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Crew Rescue");
+                alert.setContentText("You've found a ship in distress with a lone crew member and he is added to your officers list.");
+
+                alert.showAndWait();
+
+                dgObs.setShipText(dgObs.getShipText());
+                dgObs.setInstruction("Ready to go?");
+
+                hbVideo.setVisible(true);
+                hbVideo.setManaged(true);
+
+                hbChoices.setVisible(true);
+                hbChoices.setManaged(true);
+
+                hbBtnsForced.setVisible(false);
+                hbBtnsForced.setManaged(false);
+            }
+
         });
     }
 

@@ -17,21 +17,8 @@ public class LastChance extends StateAdapter {
     }
 
     @Override
-    public IStates convert(int type) {
-        int converted = data.convert(type);
-        if (converted == 0)
-            return this;
-        else
-            return new AwaitResourcesConversion(data);
-    }
-
-    @Override
-    public IStates convert(int resNew, int resOld) {
-        int converted = data.convert(resNew, resOld);
-        if (converted == 0)
-            return this;
-        else
-            return new AwaitResourcesConversion(data);
+    public IStates convert() {
+        return new AwaitResourcesConversion(data);
     }
 
     @Override

@@ -23,10 +23,7 @@ public class DataViewRight extends VBox {
         dgObs.registerPropertyChangeListener(Type.SHIP, new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-                if(dgObs.getStateID() != StateID.AWAIT_SPACESHIP_SELECTION)
-                    rightText.setText(dgObs.getShipText());
-                else
-                    rightText.setText(defaultRightText);
+                    rightText.setText(dgObs.getRight());
             }
         });
 
@@ -35,13 +32,11 @@ public class DataViewRight extends VBox {
     }
 
     private void organizeComponents() {
-
         this.setPrefWidth(200);
         this.setMaxWidth(200);
         rightText.setText(defaultRightText);
         rightText.setTextAlignment(TextAlignment.LEFT);
         rightText.setWrappingWidth(200);
-        //this.setBackground(new Background(new BackgroundFill(Color.RED, new CornerRadii(0), new Insets(0))));
 
         this.getChildren().addAll(rightText);
     }

@@ -12,7 +12,12 @@ public class AwaitResourcesConversion extends StateAdapter{
     public IStates stopConvert() {
         data.addLogs("Going back to main deck");
         //return new AwaitDiceRoll(data);
-        return new AwaitPlanetDecision(data);
+        if(data.getPlanet().getTimesMined() == data.getPlanet().getNumResources())
+            return new AwaitMiningConfirmation(data);
+        else if(data.getShip().getFuel() <= 0)
+            return new LastChance(data);
+        else
+            return new AwaitPlanetDecision(data);
     }
 
     @Override

@@ -38,7 +38,6 @@ public class UIAwaitResourcesConversion extends HBox {
     private Button      btnGoBack        = new Button();
     private Button      btnCancel        = new Button("Cancel");
     private Button      btnOk            = new Button("OK");
-    private ImageView   moneyBag         = new ImageView();
     private Text        oldR             = new Text("Old Resource");
     private Text        newR             = new Text("New Resource");
     private ComboBox    cbOld            = new ComboBox(FXCollections.observableArrayList("Black", "Red", "Blue", "Green"));
@@ -71,10 +70,6 @@ public class UIAwaitResourcesConversion extends HBox {
                 BackgroundRepeat.REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
         Background bg = new Background(bgImg);
         setBackground(bg);
-
-        moneyBag.setImage(ImageLoader.loadImage("moneybag.png"));
-        moneyBag.setPreserveRatio(true);
-        moneyBag.setFitHeight(100);
 
         btnOneToAnother.setMinSize(600,50);
         btnDroneArmor.setMinSize(600,50);
@@ -124,8 +119,6 @@ public class UIAwaitResourcesConversion extends HBox {
         boxCLabel.getChildren().addAll(oldR, newR);
         boxConvert.getChildren().addAll(cbOld, cbNew);
         boxResourceC.getChildren().addAll(boxCLabel, boxConvert, boxBtn);
-
-
 
         boxResourceC.setVisible(false);
         boxResourceC.setManaged(false);
@@ -442,6 +435,12 @@ public class UIAwaitResourcesConversion extends HBox {
             @Override
             public void handle(ActionEvent actionEvent) {
                 dgObs.stopConvert();
+                dgObs.setShipText(dgObs.getShipText());
+
+                if(dgObs.getStateID() == StateID.LAST_CHANCE)
+                    dgObs.setInstruction("Last Chance");
+                else
+                    dgObs.setInstruction("Choose your next move.");
             }
         });
     }

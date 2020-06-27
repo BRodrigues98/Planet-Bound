@@ -25,9 +25,6 @@ class UIAwaitMovement extends VBox {
     Text txtPlanet = new Text();
     ImageView spaceTravelGif = new ImageView();
     Button btnGo = new Button("Go!");
-    VBox boxGif = new VBox();
-    VBox boxText = new VBox();
-    VBox boxButton = new VBox();
 
     public UIAwaitMovement(DataGameObs dgObsN) {
         dgObs = dgObsN;
@@ -64,6 +61,7 @@ class UIAwaitMovement extends VBox {
         txtPlanet.setFont(new Font(25));
 
         btnGo.setPadding(new Insets(15));
+
         btnGo.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -77,16 +75,31 @@ class UIAwaitMovement extends VBox {
 
                     alert.showAndWait();
                 }
+                /*
                 if(!dgObs.getWasRedDot())
                     dgObs.setInstruction("Choose your next move");
                 else
                     dgObs.setInstruction("Choose a random event or a forced event");
+
+                if(dgObs.isOutOfFuel()){
+                    dgObs.setInstruction("You've ran out of fuel.");
+                }
+                */
+                if(dgObs.getStateID() == StateID.LAST_CHANCE)
+                    dgObs.setInstruction("You've ran out of fuel");
+                else if(dgObs.getStateID() == StateID.AWAIT_DICE_ROLL)
+                    dgObs.setInstruction("Choose a random event or a forced event");
+                else
+                    dgObs.setInstruction("Choose your next move");
             }
         });
 
         setAlignment(Pos.BASELINE_CENTER);
+
         setSpacing(30);
+
         setPadding(new Insets(150, 0, 0, 0));
+
         getChildren().addAll(spaceTravelGif, txtPlanet, btnGo);
     }
 }

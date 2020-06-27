@@ -13,8 +13,7 @@ public class MusicPlayer {
         mp = new MediaPlayer(music);
         mp.setStartTime(Duration.ZERO);
         mp.setStopTime(music.getDuration());
-        //TODO: Alterar para 0.25
-        mp.setVolume(0.25);
+        mp.setVolume(0.1);
         if(onRepeat){
             mp.setOnEndOfMedia(new Runnable() {
                 @Override

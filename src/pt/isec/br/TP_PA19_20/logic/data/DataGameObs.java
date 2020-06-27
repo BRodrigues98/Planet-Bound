@@ -3,6 +3,7 @@ package pt.isec.br.TP_PA19_20.logic.data;
 import pt.isec.br.TP_PA19_20.integration.StateID;
 import pt.isec.br.TP_PA19_20.integration.Type;
 import pt.isec.br.TP_PA19_20.logic.data.ship.Ship;
+import pt.isec.br.TP_PA19_20.ui.text.Text;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -95,6 +96,25 @@ public class DataGameObs {
         props.firePropertyChange(Type.STATE.toString(), null, null);
     }
 
+    public void backToPlanet() {
+        game.backToPlanet();
+        props.firePropertyChange(Type.STATE.toString(), null, null);
+    }
+
+    public void makesDecision(int value) {
+        game.makesDecision(value);
+        props.firePropertyChange(Type.STATE.toString(), null, null);
+    }
+
+    public void end() {
+        game.end();
+        props.firePropertyChange(Type.STATE.toString(), null, null);
+    }
+
+    public void start() {
+        game.start();
+        props.firePropertyChange(Type.STATE.toString(), null, null);
+    }
     //-----------------------------------
 
     //------------ LOAD/SAVE ------------
@@ -139,17 +159,29 @@ public class DataGameObs {
     public String getShipText() {
         String s = "Your ship:\nWeapon System: " + game.getShip().getWeaponSystem() + "/"+ game.getShip().getMaxWeapon() + " cells\n" +
                 "Shield System: " + game.getShip().getShieldSystem() + "/" + game.getShip().getMaxShield() + " cells\n" +
-                "Fuel: " + game.getShip().getFuel() + "/" + game.getShip().getMaxFuel() + " cells\n" +
-                "Cargo Hold (Level " + game.getShip().getCargoHoldLvl() + " of " + game.getShip().getMaxLevel() + ")\n";
+                "Fuel: ";
+
+        if(game.isOutOfFuel())
+            s += "0 / " + game.getShip().getMaxFuel() + " cells\n";
+        else
+            s += game.getShip().getFuel() + "/ " + game.getShip().getMaxFuel() + " cells\n";
+
+
+        s += "Cargo Hold (Level " + game.getShip().getCargoHoldLvl() + " of " + game.getShip().getMaxLevel() + ")\n";
 
         for (int i = 0; i < game.getShip().getCargoHold().size(); i++) {
             s += "\t" + game.getShip().getCargoType().get(i) + ": " + game.getShip().getCargoHold().get(i) +
                     " of " + game.getShip().getMaxCargo() + "\n";
         }
 
-        s+= "Artifacts: " + game.getShip().getNumArtifacts() + " of 5\nDrone: " + game.getShip().getDrone().getHp() + " of 6 Armor\n" +
-                "Officers:\n";
+        s+= "Artifacts: " + game.getShip().getNumArtifacts() + " of 5\n";
 
+        if(game.hasDrone())
+            s += "Drone: " + game.getShip().getDrone().getHp() + " of 6 Armor\n";
+        else
+            s += "Drone: Destroyed";
+
+        s += "Officers:\n";
         for (int i = 0; i < game.getOfficers().size(); i++) {
             s += game.getPositions().get(i) + ": ";
             if(game.getOfficers().get(i))
@@ -159,6 +191,10 @@ public class DataGameObs {
         }
 
         return s;
+    }
+
+    public String getRight(){
+        return shipText;
     }
 
     public void setShipText(String s){
@@ -313,6 +349,26 @@ public class DataGameObs {
 
     public boolean getWasWormhole() {
         return game.getWasWormhole();
+    }
+
+    public boolean isCargoMaxLevel() {
+        return game.isCargoMaxLevel();
+    }
+
+    public boolean wasUpgradedThisTurn() {
+        return game.wasUpgradedThisTurn();
+    }
+
+    public boolean isAllOfficersAlive() {
+        return game.isAllOfficersAlive();
+    }
+
+    public boolean isWeaponMaxLevel() {
+        return game.isWeaponMaxLevel();
+    }
+
+    public boolean isOutOfFuel() {
+        return game.isOutOfFuel();
     }
 
 

@@ -15,6 +15,12 @@ public class AwaitMiningConfirmation extends StateAdapter{
     }
 
     @Override
+    public IStates convert() {
+        return new AwaitResourcesConversion(data);
+    }
+
+    /*
+    @Override
     public IStates convert(int type) {
         int converted = data.convert(type);
         if (converted == 0)
@@ -31,6 +37,7 @@ public class AwaitMiningConfirmation extends StateAdapter{
         else
             return new AwaitResourcesConversion(data);
     }
+    */
 
     @Override
     public IStates nextTurn() {

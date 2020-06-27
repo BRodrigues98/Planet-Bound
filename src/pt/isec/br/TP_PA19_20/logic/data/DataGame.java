@@ -48,6 +48,7 @@ public class DataGame implements Serializable {
     private IStates state;
     private String event;
     private boolean wormhole;
+    private boolean cargoUpgradedThisTurn;
 
 
     //------------ CONSTRUCTOR ------------
@@ -141,6 +142,14 @@ public class DataGame implements Serializable {
     public boolean isAlreadyHadChance() { return alreadyHadChance; }
 
     public void setAlreadyHadChance(boolean alreadyHadChance) { this.alreadyHadChance = alreadyHadChance; }
+
+    public boolean isCargoUpgradedThisTurn() {
+        return cargoUpgradedThisTurn;
+    }
+
+    public void setCargoUpgradedThisTurn(boolean cargoUpgradedThisTurn) {
+        this.cargoUpgradedThisTurn = cargoUpgradedThisTurn;
+    }
 
     //-----------------------------------------
 
@@ -722,6 +731,11 @@ public class DataGame implements Serializable {
                     addLogs("Your cargo hold is already at max level (level " + ship.getCargoHoldLvl() + ").");
                     return 0;
                 }
+
+                if(cargoUpgradedThisTurn){
+                    return 0;
+                }
+
                 for (int i = 0; i < ship.getCargoHold().size(); i++) {
                     if(ship.getCargoHold().get(i) < 2){
                         addLogs("You don't have enough resources of type " + ship.getCargoType().get(i) + " to complete this purchase.");
@@ -736,6 +750,7 @@ public class DataGame implements Serializable {
                 ship.setMaxCargo(ship.getMaxCargo() + 6);
                 addLogs("Your cargo hold level is now at level " + ship.getCargoHoldLvl() + " and can carry up to " + ship.getMaxCargo() + " of each resource.");
 
+                cargoUpgradedThisTurn = true;
                 return 1;
 
             case 2: //Hire a crew member

@@ -23,7 +23,6 @@ public interface IStates extends Serializable {
 
     IStates backToPlanet();
 
-    IStates lastChance();
 
     IStates end();
 

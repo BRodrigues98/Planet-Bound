@@ -48,13 +48,6 @@ public class UIAwaitMiningConfirmation extends HBox {
 
         nextPlanetImg.setImage(ImageLoader.loadImage("proceed.png"));
         arrowConvertImg.setImage(ImageLoader.loadImage("arrow.png"));
-
-        nextPlanetImg.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                dgObs.nextTurn();
-            }
-        });
     }
 
     private void organizeComponents() {
@@ -115,6 +108,35 @@ public class UIAwaitMiningConfirmation extends HBox {
         arrowConvertImg.setOnMouseMoved((MouseEvent f)->{
             ttArrow.setX(f.getScreenX());
             ttArrow.setY(f.getScreenY());
+        });
+
+        nextPlanetImg.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                dgObs.setShipText(dgObs.getShipText());
+                dgObs.setInstruction("Ready to go?");
+
+                dgObs.nextTurn();
+            }
+        });
+
+        arrowConvertImg.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if(dgObs.isCargoAlive()) {
+                    dgObs.setInstruction("Select an option to convert your resources.");
+                    dgObs.setShipText(dgObs.getShipText());
+
+                    dgObs.convert();
+                }
+                else{
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Cargo Hold Officer dead");
+                    alert.setContentText("Your Cargo Hold Officer is dead. You can't convert resources.");
+
+                    alert.showAndWait();
+                }
+            }
         });
 
         vbArrow.getChildren().add(arrowConvertImg);

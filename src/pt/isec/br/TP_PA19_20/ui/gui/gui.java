@@ -11,6 +11,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import pt.isec.br.TP_PA19_20.integration.StateID;
 import pt.isec.br.TP_PA19_20.logic.Debug;
 import pt.isec.br.TP_PA19_20.logic.data.DataGameObs;
 import pt.isec.br.TP_PA19_20.resources.MusicPlayer;
@@ -21,20 +22,23 @@ import java.io.File;
 public class gui extends BorderPane {
     DataGameObs dgObs;
     StackPane usefulArea = new StackPane();
-    //Text bottomText = new Text();
     MenuBar menuBar = new MenuBar();
     FileChooser fileChooser = new FileChooser();
+    private final String defaultRightText = "This area will show your ship condition and your resources";
 
 
     public gui(DataGameObs dgObsN) {
         this.dgObs = dgObsN;
 
-        UIAwaitSpaceshipSelection uiss = new UIAwaitSpaceshipSelection(dgObs);
+        UIAwaitSpaceshipSelection uiass = new UIAwaitSpaceshipSelection(dgObs);
         UIAwaitMovement uiam = new UIAwaitMovement(dgObs);
         UIAwaitPlanetDecision uiapd = new UIAwaitPlanetDecision(dgObs);
         UIAwaitMiningConfirmation uiamc = new UIAwaitMiningConfirmation(dgObs);
         UIAwaitResourcesConversion uiarc = new UIAwaitResourcesConversion(dgObs);
         UIAwaitDiceRoll uiadr = new UIAwaitDiceRoll(dgObs);
+        UIAwaitSSDecision uiassd = new UIAwaitSSDecision(dgObs);
+        UILastChance uilc = new UILastChance(dgObs);
+        UIGameOver uigo = new UIGameOver(dgObs);
 
 
         DataViewLeft dvL = new DataViewLeft(dgObs);
@@ -46,12 +50,19 @@ public class gui extends BorderPane {
         uiamc.setVisible(false);
         uiarc.setVisible(false);
         uiadr.setVisible(false);
+        uiassd.setVisible(false);
+        uilc.setVisible(false);
+        uigo.setVisible(false);
+
 
         uiam.setManaged(false);
         uiapd.setManaged(false);
         uiamc.setManaged(false);
         uiarc.setManaged(false);
         uiadr.setManaged(false);
+        uiassd.setManaged(false);
+        uilc.setManaged(false);
+        uigo.setManaged(false);
 
         usefulArea.setStyle("-fx-padding: 5;" +
                 "-fx-border-style: solid inside;" +
@@ -60,7 +71,7 @@ public class gui extends BorderPane {
                 "-fx-border-radius: 5;" +
                 "-fx-border-color: gray;");
 
-        usefulArea.getChildren().addAll(dvL, dvR, dvB, uiss, uiam, uiapd, uiamc, uiarc, uiadr);
+        usefulArea.getChildren().addAll(dvL, dvR, dvB, uiass, uiam, uiapd, uiamc, uiarc, uiadr, uiassd, uilc, uigo);
 
         MusicPlayer.playMusic("lol.mp3", true);
 
@@ -104,7 +115,7 @@ public class gui extends BorderPane {
 
         Menu volume = new Menu("Volume");
         CustomMenuItem customMenuItem = new CustomMenuItem();
-        Slider slider = new Slider(0, 100, 25);
+        Slider slider = new Slider(0, 100, 10);
         slider.setOrientation(Orientation.VERTICAL);
         customMenuItem.setContent(slider);
         customMenuItem.setHideOnClick(false);
@@ -115,6 +126,8 @@ public class gui extends BorderPane {
         //Eventos dos menus
         //File -> New
         fileNew.setOnAction((ActionEvent e) -> {
+            dgObs.setInstruction("Choose your spaceship (Hover to see stats)");
+            dgObs.setShipText(defaultRightText);
             dgObs.restart();
         });
 
@@ -130,6 +143,9 @@ public class gui extends BorderPane {
             File f = fileChooser.showOpenDialog(getScene().getWindow());
             if (f != null)
                 dgObs.loadGame(f.getAbsolutePath());
+
+            dgObs.setShipText(dgObs.getShipText());
+            dgObs.setInstruction(dgObs.getInstruction());
         });
 
         // File -> Exit

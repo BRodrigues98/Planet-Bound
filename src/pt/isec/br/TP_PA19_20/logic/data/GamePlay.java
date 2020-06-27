@@ -67,6 +67,21 @@ public class GamePlay implements Serializable {
         state = state.roll(type);
     }
 
+    public void backToPlanet() {
+        state = state.backToPlanet();
+    }
+
+    public void makesDecision(int value) {
+        state = state.makesDecision(value);
+    }
+
+    public void end() {
+        state = state.end();
+    }
+
+    public void start() {
+        state = state.start(data);
+    }
     //------------------------------------
 
     //--------- DATA RETREIVING ----------
@@ -225,5 +240,33 @@ public class GamePlay implements Serializable {
         return data.isWormhole();
     }
 
+    public boolean isCargoMaxLevel() {
+        return data.getShip().getCargoHoldLvl() == data.getShip().getMaxLevel();
+    }
+
+    public boolean wasUpgradedThisTurn() {
+        return data.isCargoUpgradedThisTurn();
+    }
+
+    public boolean isAllOfficersAlive() {
+        boolean bool = true;
+
+        for (int i = 0; i < data.getOfficers().size(); i++) {
+            if(!data.getOfficers().get(i)) {
+                bool = false;
+                break;
+            }
+        }
+
+        return bool;
+    }
+
+    public boolean isWeaponMaxLevel() {
+        return data.getShip().getWeaponLevel() == data.getShip().getMaxWeapon();
+    }
+
+    public boolean isOutOfFuel() {
+        return data.getShip().getFuel() <= 0;
+    }
     //------------------------------------
 }

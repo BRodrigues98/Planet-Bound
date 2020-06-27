@@ -4,22 +4,18 @@ import pt.isec.br.TP_PA19_20.integration.StateID;
 import pt.isec.br.TP_PA19_20.logic.data.DataGame;
 
 public class AwaitSSDecision extends StateAdapter{
-    boolean cargoUpgradedThisTurn;
+
     public AwaitSSDecision(DataGame data) {
         super(data);
         data.setState(this);
-        cargoUpgradedThisTurn = false;
+        data.setCargoUpgradedThisTurn(false);
     }
-
-    public boolean isCargoUpgradedThisTurn() { return cargoUpgradedThisTurn; }
-
-    public void setCargoUpgradedThisTurn(boolean cargoUpgradedThisTurn) { this.cargoUpgradedThisTurn = cargoUpgradedThisTurn; }
 
     @Override
     public IStates makesDecision(int choice) {
          //data.debug();
          //data.getShip().debug();
-        if(choice == 1 && cargoUpgradedThisTurn){
+        if(choice == 1 && data.isCargoUpgradedThisTurn()){
             data.addLogs("You can't upgrade your cargo again.");
             return this;
         }
@@ -27,14 +23,14 @@ public class AwaitSSDecision extends StateAdapter{
         int decided = data.makesDecision(choice);
 
         if (choice == 1 && decided == 1) //upgrade cargo hold
-            cargoUpgradedThisTurn = true;
+            data.setCargoUpgradedThisTurn(true);
 
         return this;
     }
 
     @Override
     public IStates backToPlanet() {
-        return new AwaitDiceRoll(data);
+        return new AwaitPlanetDecision(data);
     }
 
     @Override

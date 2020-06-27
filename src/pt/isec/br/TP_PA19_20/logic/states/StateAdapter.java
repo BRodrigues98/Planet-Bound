@@ -70,8 +70,7 @@ public abstract class StateAdapter implements IStates {
     @Override
     public IStates backToPlanet() { return this; }
 
-    @Override
-    public IStates lastChance() { return this; }
+
 
     @Override
     public IStates end() { return this; }
@@ -83,7 +82,8 @@ public abstract class StateAdapter implements IStates {
 
     @Override
     public IStates restart() {
-        return this;
+        data.init();
+        return new AwaitSpaceshipSelection(data);
     }
 
     //@Override
