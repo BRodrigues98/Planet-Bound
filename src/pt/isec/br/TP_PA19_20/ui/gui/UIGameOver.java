@@ -48,10 +48,12 @@ public class UIGameOver extends VBox {
 
         if(dgObs.getShip() != null) {
             if (dgObs.hasWon()) {
-               txtFinal.setText("Congratulations!\nYou've won the game.");
-               txtFinal.setFill(Color.GOLD);
-               setBackground(new Background(new BackgroundImage(ImageLoader.loadImage("won.png"), BackgroundRepeat.REPEAT,
-                       BackgroundRepeat.REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
+                txtPlayAgain.setFill(Color.WHITE);
+
+                txtFinal.setText("Congratulations!\nYou've won the game.");
+                txtFinal.setFill(Color.GOLD);
+                setBackground(new Background(new BackgroundImage(ImageLoader.loadImage("won.png"), BackgroundRepeat.REPEAT,
+                        BackgroundRepeat.REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
             } else {
                 txtFinal.setText("Sorry,\nyou've lost the game.");
                 txtFinal.setFill(Color.BLUE);
@@ -62,7 +64,6 @@ public class UIGameOver extends VBox {
     }
 
     private void registerComponents() {
-
 
         txtPlayAgain.setStyle("-fx-font-family: Magneto Bold; -fx-font-size: 40");
         txtFinal.setStyle("-fx-font-family: Magneto Bold; -fx-font-size: 50");
