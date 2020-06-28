@@ -20,13 +20,13 @@ import java.beans.PropertyChangeListener;
 
 public class UIGameOver extends VBox {
     private         DataGameObs dgObs;
-    private         Text        txtFinal            = new Text();
-    private         Text        txtPlayAgain        = new Text("Do you want to play again?");
-    private         Button      btnYes              = new Button();
-    private         Button      btnNo               = new Button();
-    private         VBox        vbButton            = new VBox();
-    private         VBox        vbTxt               = new VBox();
-    private final   String      defaultRightText    = "This area will show your ship condition and your resources";
+    private         Text            txtFinal            = new Text();
+    private         Text            txtPlayAgain        = new Text("Do you want to play again?");
+    private         Button          btnYes              = new Button();
+    private         Button          btnNo               = new Button();
+    private         VBox            vbButton            = new VBox();
+    private         VBox            vbTxt               = new VBox();
+    private final   String          defaultRightText    = "This area will show your ship condition and your resources";
 
     public UIGameOver(DataGameObs dgObsN) {
         dgObs = dgObsN;
@@ -50,18 +50,18 @@ public class UIGameOver extends VBox {
             if (dgObs.hasWon()) {
                txtFinal.setText("Congratulations!\nYou've won the game.");
                txtFinal.setFill(Color.GOLD);
+               setBackground(new Background(new BackgroundImage(ImageLoader.loadImage("won.png"), BackgroundRepeat.REPEAT,
+                       BackgroundRepeat.REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
             } else {
                 txtFinal.setText("Sorry,\nyou've lost the game.");
                 txtFinal.setFill(Color.BLUE);
+                setBackground(new Background(new BackgroundImage(ImageLoader.loadImage("gameOver.png"), BackgroundRepeat.REPEAT,
+                        BackgroundRepeat.REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
             }
         }
     }
 
     private void registerComponents() {
-        BackgroundImage bgImg = new BackgroundImage(ImageLoader.loadImage("gameOver.png"), BackgroundRepeat.REPEAT,
-                BackgroundRepeat.REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
-        Background bg = new Background(bgImg);
-        setBackground(bg);
 
 
         txtPlayAgain.setStyle("-fx-font-family: Magneto Bold; -fx-font-size: 40");

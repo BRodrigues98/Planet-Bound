@@ -5,7 +5,7 @@ package pt.isec.br.TP_PA19_20.logic.data.ship;
 public class Mining extends Ship{
     public Mining() {
         super();
-        fuel = 53;
+        fuel = 0;
         shieldSystem = 18;
         maxLevel = 4;
         maxShield = 18;
