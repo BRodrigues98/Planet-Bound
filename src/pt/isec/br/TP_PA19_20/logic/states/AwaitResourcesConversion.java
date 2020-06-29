@@ -29,11 +29,7 @@ public class AwaitResourcesConversion extends StateAdapter{
     @Override
     public IStates convert(int resNew, int resOld) {
         int converted = data.convert(resNew, resOld);
-        /*if (converted == 0)
-            return this;
-        else
-            return new AwaitResourcesConversion(data);
-         */
+
         return this;
     }
 

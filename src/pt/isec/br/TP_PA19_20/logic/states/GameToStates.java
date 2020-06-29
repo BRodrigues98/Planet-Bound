@@ -58,8 +58,6 @@ public class GameToStates {
         }
     }
 
-    public void returnToShip() { this.state = state.returnToShip(); }
-
     public void convert(int type) { this.state = state.convert(type); }
 
     public void convert(int resNew, int resOld) { this.state = state.convert(resNew, resOld); }
@@ -84,8 +82,6 @@ public class GameToStates {
     public void start() { this.state = state.start(data); }
 
     public void currentShipStats() { data.currentShipStats(); }
-
-    public void checkLossConditions() { this.state = state.checkLossConditions();}
 
     public int getTimesMined() { return data.getPlanet().getTimesMined(); }
 

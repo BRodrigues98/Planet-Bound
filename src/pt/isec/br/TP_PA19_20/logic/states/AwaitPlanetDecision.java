@@ -10,7 +10,7 @@ import pt.isec.br.TP_PA19_20.logic.data.planet.RedPlanet;
 public class AwaitPlanetDecision extends StateAdapter{
     public AwaitPlanetDecision(DataGame data) {
         super(data);
-        data.setState(this);
+        //data.setState(this);
         if(data.getSavedPlanet() != null){
             data.setPlanet(data.getSavedPlanet());
             data.setSavedPlanet(null);
@@ -90,25 +90,6 @@ public class AwaitPlanetDecision extends StateAdapter{
         return new AwaitResourcesConversion(data);
     }
 
-    /*
-    @Override
-    public IStates convert(int type) {
-        int converted = data.convert(type);
-        if (converted == 0)
-            return this;
-        else
-            return new AwaitResourcesConversion(data);
-    }
-
-    @Override
-    public IStates convert(int resNew, int resOld) {
-        int converted = data.convert(resNew, resOld);
-        if (converted == 0)
-            return this;
-        else
-            return new AwaitResourcesConversion(data);
-    }
-     */
 
     @Override
     public StateID getStateID() {

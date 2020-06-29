@@ -24,10 +24,6 @@ public class GamePlay implements Serializable {
 
     public void setShip(int value) { state = state.selectShip(value); }
 
-    public void restart() {
-        state = state.restart();
-    }
-
     public void move(boolean firstMove) {
         state = state.move(firstMove);
     }
@@ -79,6 +75,12 @@ public class GamePlay implements Serializable {
     public void start() {
         state = state.start(data);
     }
+
+    public void restart() {
+        state = state.restart();
+    }
+
+
     //------------------------------------
 
     //--------- DATA RETREIVING ----------

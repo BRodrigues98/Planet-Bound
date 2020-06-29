@@ -36,11 +36,6 @@ public class DataGameObs {
         props.firePropertyChange(Type.STATE.toString(), null, null);
     }
 
-    public void restart() {
-        game.restart();
-        props.firePropertyChange(Type.STATE.toString(), null, null);
-    }
-
     public void move(boolean firstMove) {
         game.move(firstMove);
         props.firePropertyChange(Type.STATE.toString(), null, null);
@@ -103,6 +98,11 @@ public class DataGameObs {
 
     public void start() {
         game.start();
+        props.firePropertyChange(Type.STATE.toString(), null, null);
+    }
+
+    public void restart() {
+        game.restart();
         props.firePropertyChange(Type.STATE.toString(), null, null);
     }
     //-----------------------------------
@@ -356,5 +356,7 @@ public class DataGameObs {
     public boolean hasWon() {
         return game.hasWon();
     }
+
+
     //-----------------------------------
 }

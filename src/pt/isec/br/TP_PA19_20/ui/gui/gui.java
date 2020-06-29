@@ -164,11 +164,6 @@ public class gui extends BorderPane {
 
         });
 
-        //bottomSide.getChildren().addAll(bottomText);
-
-
-
-
         setCenter(usefulArea);
         setLeft(leftSide);
         setBottom(bottomSide);

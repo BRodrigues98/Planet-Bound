@@ -9,8 +9,6 @@ import pt.isec.br.TP_PA19_20.logic.data.planet.alien.RedAlien;
 import pt.isec.br.TP_PA19_20.logic.data.ship.Drone;
 import pt.isec.br.TP_PA19_20.logic.data.ship.Mining;
 import pt.isec.br.TP_PA19_20.logic.data.ship.Ship;
-import pt.isec.br.TP_PA19_20.logic.states.IStates;
-import pt.isec.br.TP_PA19_20.ui.text.Colors;
 import utils.UtilFile;
 
 import java.io.BufferedReader;
@@ -42,7 +40,7 @@ public class DataGame implements Serializable {
     private List<String> events;
     private boolean wasRedDot;
     private boolean alreadyHadChance;
-    private IStates state;
+    //private IStates state;
     private String event;
     private boolean wormhole;
     private boolean cargoUpgradedThisTurn;
@@ -188,9 +186,14 @@ public class DataGame implements Serializable {
 
 
     public int whereTo() {
+        if(!officers.get(0)){
+            //Captain dead
+            return 0;
+        }
+
         double wormHole = Math.random();
         if(wormHole <= 0.125){
-            addLogs("You're going through a " + Colors.ANSI_YELLOW + "wormhole" + Colors.ANSI_RESET + "!");
+            addLogs("You're going through a wormhole!");
             wormhole = true;
             int shieldToLose, fuelToLose;
             if(!officers.get(3)){
@@ -211,7 +214,7 @@ public class DataGame implements Serializable {
                 else {
                     addLogs("You've lost " + shieldToLose + " shield cells. You now have " + ship.getShieldSystem() + " cells.");
                     addLogs("You've lost " + fuelToLose + " fuel. You now have " + ship.getFuel() + " fuel left.");
-                    addLogs("Exiting " + Colors.ANSI_YELLOW + "wormhole" + Colors.ANSI_RESET + ".");
+                    addLogs("Exiting wormhole.");
                     if(!wasRedDot) {
                         addLogs("New event about to happen. Hold tight.");
                         wasRedDot = true;
@@ -234,8 +237,7 @@ public class DataGame implements Serializable {
                         break;
                     }
                 }
-                addLogs("Because you didn't have enough shield cells, " + Colors.ANSI_RED + "one of your officers is going to die"
-                        + Colors.ANSI_RESET + " and you lose an extra 2 fuel.");
+                addLogs("Because you didn't have enough shield cells, one of your officers is going to die and you lose an extra 2 fuel.");
                 addLogs(officerKilled(index));
                 officers.set(index, false);
                 ship.setFuel(ship.getFuel() - 2);
@@ -247,7 +249,7 @@ public class DataGame implements Serializable {
                     return 0;
                 else { //Passamos o wormhole e chegamos a novo planeta
 
-                    addLogs("Exiting " + Colors.ANSI_YELLOW + "wormhole" + Colors.ANSI_RESET + ".");
+                    addLogs("Exiting wormhole.");
                     if(!wasRedDot) {
                         addLogs("New event about to happen. Hold tight.");
                         wasRedDot = true;
@@ -443,19 +445,19 @@ public class DataGame implements Serializable {
     private void randomAlien() {
         double rand = Math.random();
         if(rand <= 0.25){
-            addLogs(Colors.ANSI_BLACK + "Black Alien" + Colors.ANSI_RESET + " spawned!");
+            addLogs("Black Alien spawned!");
             getPlanet().setAlien(new BlackAlien(ship.getDrone().getPosX(), ship.getDrone().getPosY()));
         }
         else if(rand > 0.25 && rand <= 0.5){
-            addLogs(Colors.ANSI_GREEN + "Green Alien" + Colors.ANSI_RESET + " spawned!");
+            addLogs("Green Alien spawned!");
             getPlanet().setAlien(new GreenAlien(ship.getDrone().getPosX(), ship.getDrone().getPosY()));
         }
         else if(rand > 0.5 && rand <= 0.75){
-            addLogs(Colors.ANSI_BLACK + "Blue Alien" + Colors.ANSI_RESET + " spawned!");
+            addLogs("Blue Alien spawned!");
             getPlanet().setAlien(new BlueAlien(ship.getDrone().getPosX(), ship.getDrone().getPosY()));
         }
         else {
-            addLogs(Colors.ANSI_RED + "Red Alien" + Colors.ANSI_RESET + " spawned!");
+            addLogs("Red Alien spawned!");
             getPlanet().setAlien(new RedAlien(ship.getDrone().getPosX(), ship.getDrone().getPosY()));
         }
     }
@@ -587,11 +589,11 @@ public class DataGame implements Serializable {
             }
         }
 
-        if(officers.isEmpty())
+        if(!officers.get(0))
             return 0;
         else if(ship.getFuel() <= 0)
             return -1;
-        else if(!officers.isEmpty() && ship.getFuel() > 0)
+        else if(officers.get(0) && ship.getFuel() > 0)
             return 1;
         else
             return 2;
@@ -851,7 +853,7 @@ public class DataGame implements Serializable {
         for (int i = 0; i < ship.getCargoHold().size(); i++) {
             addLogs(ship.getCargoType().get(i) + " resources: " + ship.getCargoHold().get(i));
         }
-        addLogs(Colors.ANSI_PURPLE + "Artifacts" + Colors.ANSI_RESET + ": " + ship.getNumArtifacts());
+        addLogs("Artifacts: " + ship.getNumArtifacts());
     }
 
     public int getFinalScore() {
@@ -904,15 +906,6 @@ public class DataGame implements Serializable {
     public String getConvertText() {
         return "On your ship workbench you can:\n- Convert one type of resource into another\n- Craft an energy shield (costs 1 black, green and blue)\n" +
                 "- Craft an ammo cell (costs 1 black and blue resource)\n- Craft a fuel cell (costs 1 black, red and green resources";
-    }
-
-
-    public void setState(IStates state) {
-        this.state = state;
-    }
-
-    public IStates getState() {
-        return state;
     }
 
 

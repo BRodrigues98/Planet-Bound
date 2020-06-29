@@ -12,22 +12,19 @@ public interface IStates extends Serializable {
     IStates nextTurn();
     IStates makesDecision(int choice);
     IStates landOnSS();
-    IStates returnToShip();
     IStates land();
     IStates convert();
     IStates convert(int type);
     IStates convert(int resNew, int resOld);
     IStates roll(int type);
     IStates stopConvert();
-    IStates checkLossConditions();
-
     IStates backToPlanet();
-
-
     IStates end();
+    IStates restart();
 
     StateID getStateID();
 
-    IStates restart();
+
+
     //IStates extraConversion();
 }

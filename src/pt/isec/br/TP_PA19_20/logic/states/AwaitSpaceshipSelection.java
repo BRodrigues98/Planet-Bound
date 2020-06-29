@@ -8,7 +8,6 @@ import pt.isec.br.TP_PA19_20.logic.data.ship.Mining;
 public class AwaitSpaceshipSelection extends StateAdapter{
     public AwaitSpaceshipSelection(DataGame data) {
         super(data);
-        data.setState(this);
     }
 
 

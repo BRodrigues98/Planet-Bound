@@ -45,8 +45,7 @@ public abstract class Ship implements Serializable {
         cargoType.add("blue");   //Blue resource
         cargoType.add("green");   //Green resource
 
-        //TODO: Mudar para 0 quando resolver o ganhar o jogo
-        numArtifacts = 5;
+        numArtifacts = 0;
         drone = new Drone();
         hasDrone = true;
         extraMember = new ArrayList<>();

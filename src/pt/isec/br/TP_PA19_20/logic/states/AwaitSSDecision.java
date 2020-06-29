@@ -7,14 +7,11 @@ public class AwaitSSDecision extends StateAdapter{
 
     public AwaitSSDecision(DataGame data) {
         super(data);
-        data.setState(this);
         data.setCargoUpgradedThisTurn(false);
     }
 
     @Override
     public IStates makesDecision(int choice) {
-         //data.debug();
-         //data.getShip().debug();
         if(choice == 1 && data.isCargoUpgradedThisTurn()){
             data.addLogs("You can't upgrade your cargo again.");
             return this;

@@ -9,10 +9,6 @@ public abstract class StateAdapter implements IStates {
 
     public StateAdapter(DataGame data) { this.data = data; }
 
-    public DataGame getGame() { return data; }
-
-    public void setGame(DataGame data) { this.data = data; }
-
     @Override
     public IStates start(DataGame data) { return this; }
 
@@ -32,17 +28,17 @@ public abstract class StateAdapter implements IStates {
     public IStates landOnSS() { return this; }
 
     @Override
-    public IStates returnToShip() { return this; }
-
-    @Override
     public IStates land() { return this; }
 
+    //Passar para estado AwaitResourceConversion
     @Override
     public IStates convert() { return this; }
 
+    //Dentro do AwaitResourceConversion
     @Override
     public IStates convert(int type) { return this; }
 
+    //Dentro do AwaitResourceConversion
     @Override
     public IStates convert(int resNew, int resOld) { return this; }
 
@@ -53,24 +49,7 @@ public abstract class StateAdapter implements IStates {
     public IStates stopConvert() { return this; }
 
     @Override
-    public IStates checkLossConditions() {
-        if(data.getShip() != null) {
-            if(!data.getOfficers().get(0))
-                return new GameOver(data);
-            else if (data.getShip().getFuel() <= 0 && !data.isAlreadyHadChance())
-                return new LastChance(data);
-            else if (data.getShip().getFuel() <= 0)
-                return new GameOver(data);
-            else
-                return this;
-        }
-        return this;
-    }
-
-    @Override
     public IStates backToPlanet() { return this; }
-
-
 
     @Override
     public IStates end() { return this; }
@@ -85,8 +64,4 @@ public abstract class StateAdapter implements IStates {
         data.init();
         return new AwaitSpaceshipSelection(data);
     }
-
-    //@Override
-    //public IStates extraConversion() { return this; }
-
 }

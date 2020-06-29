@@ -7,7 +7,7 @@ public class AwaitMovement extends StateAdapter{
 
     public AwaitMovement(DataGame data) {
         super(data);
-        data.setState(this);
+        //data.setState(this);
     }
 
     @Override
